@@ -28,14 +28,36 @@ class eyeForEye : public Strategies {
 			return 'C';
 		}
 		int first, second;
-		if (im == 1) { first = 2; second = 3; }
-		else if (im == 2) { first = 1; second = 3; }
-		else { first = 1; second = 2; }
+		if (im == 1) { first = 1; second = 2; }
+		else if (im == 2) { first = 0; second = 2; }
+		else { first = 0; second = 1; }
 		for (int i = 0; i < x.size(); i++) {
-			if (x[i][first] == 'D' || x[i][second] == 'D')
-				return 'D';
+			if (x[i][first] == 'C' || x[i][second] == 'C')
+				return 'C';
 		}
-		return 'C';
+		return 'D';
+	}
+};
+class statistician : public Strategies {
+	char makeDecision(std::vector<std::string> x, int im) {
+		if (x.size() == 0) {
+			return 'C';
+		}
+		int first, second;
+		if (im == 1) { first = 1; second = 2; }
+		else if (im == 2) { first = 0; second = 2; }
+		else { first = 0; second = 1; }
+		float probability1 = 0, probability2 = 0;
+		for (int i = 0; i < x.size(); i++) {
+			if (x[i][first] == 'C')
+				probability1 += 1 / x.size();
+			if (x[i][second] == 'C')
+				probability2 += 1 / x.size();
+		}
+		if (probability1 >= 0.5 && probability2 >= 0.5) {
+			return 'C';
+		}
+		return 'D';
 	}
 };
 class StrategiesFactory {
@@ -64,5 +86,11 @@ class eyeForEyeFactory : public StrategiesFactory {
 public:
 	Strategies* makeStrategies() {
 		return new eyeForEye();
+	}
+};
+class statisticianFactory : public StrategiesFactory {
+public:
+	Strategies* makeStrategies() {
+		return new statistician();
 	}
 };

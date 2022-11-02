@@ -9,13 +9,13 @@
 #include <map>
 #include "Strategies.h"
 std::vector<std::string> x;
-std::map<int, std::string> strategies = { {1,"AlwaysSayYes"},{2,"AlwaysSayNo"},{3,"Random"},{4,"EyeForEye"},{5,"TheWorseTheBetter"}, {6,"TheEqualizer"} };
+std::map<int, std::string> strategies = { {1,"AlwaysSayYes"},{2,"AlwaysSayNo"},{3,"Random"},{4,"EyeForEye"},{5,"Statistician"}, {6,"TheEqualizer"} };
 /*enum strategies {
     AlwaysSayYes,
     AlwaysSayNo,
     Random,
     EyeForEye,
-    TheWorseTheBetter,
+    Statistician,
     TheEqualizer
 };*/
 std::multimap<int, int> flip_map(std::map<int, int>& mymap)
@@ -61,6 +61,8 @@ void Fast(std::vector <int> names, int steps, std::string matrixFile) {
             }
             case 5: 
             {
+                statisticianFactory factory;
+                Prisoner.push_back(factory.makeStrategies());
                 break;
             }
             case 6:
