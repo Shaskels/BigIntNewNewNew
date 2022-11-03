@@ -60,6 +60,36 @@ class statistician : public Strategies {
 		return 'D';
 	}
 };
+class theEqualizer : public Strategies {
+	char makeDecision(std::vector<std::string> x, int im) {
+		if (x.size() == 0) {
+			return 'C';
+		}
+		int first, second;
+		if (im == 1) { first = 1; second = 2; }
+		else if (im == 2) { first = 0; second = 2; }
+		else { first = 0; second = 1; }
+		int yearsFirst = 0;
+		int yearsSecond = 0;
+		int yearsMe = 0;
+		extern int gameMatrix[9][7];
+		for (int i = 0; i < x.size(); i++) {
+			for (int j = 1; j < 9; j++) {
+				if (x[i][first] == gameMatrix[j][0] && x[i][second] == gameMatrix[j][1] && x[i][im - 1] == gameMatrix[j][2]) {
+					yearsFirst += gameMatrix[j][4];
+					yearsSecond += gameMatrix[j][5];
+					yearsMe += gameMatrix[j][6];
+					break;
+				}
+			}
+		}
+		if (yearsMe >= yearsFirst || yearsMe >= yearsSecond ) {
+			return 'C';
+		}
+		else return 'D';
+		return 'C';
+	}
+};
 class StrategiesFactory {
 public:
 	virtual Strategies* makeStrategies() = 0;
@@ -92,5 +122,11 @@ class statisticianFactory : public StrategiesFactory {
 public:
 	Strategies* makeStrategies() {
 		return new statistician();
+	}
+};
+class theEqualizerFactory : public StrategiesFactory {
+public:
+	Strategies* makeStrategies() {
+		return new theEqualizer();
 	}
 };

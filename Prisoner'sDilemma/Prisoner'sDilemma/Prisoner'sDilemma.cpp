@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <map>
 #include "Strategies.h"
-std::vector<std::string> x;
+int gameMatrix[9][7] = { 0 };
 std::map<int, std::string> strategies = { {1,"AlwaysSayYes"},{2,"AlwaysSayNo"},{3,"Random"},{4,"EyeForEye"},{5,"Statistician"}, {6,"TheEqualizer"} };
 /*enum strategies {
     AlwaysSayYes,
@@ -29,6 +29,22 @@ std::multimap<int, int> flip_map(std::map<int, int>& mymap)
     }
 
     return multiMap;
+}
+bool isDigit(std::string s) {
+    for (int i = 0; i < s.size(); i++) {
+        if (!isdigit(s[i]))
+            return false;
+    }
+    return true;
+}
+int makeInt(std::string s) {
+    int t = 0;
+    int level = 1;
+    for (int i = 0; i < s.size(); i++) {
+        t = (s[i] - '0') + t * level;
+        level *= 10;
+    }
+    return t;
 }
 void Fast(std::vector <int> names, int steps, std::string matrixFile) {
     std::vector <Strategies*> Prisoner;
@@ -67,34 +83,40 @@ void Fast(std::vector <int> names, int steps, std::string matrixFile) {
             }
             case 6:
             {
+                theEqualizerFactory factory;
+                Prisoner.push_back(factory.makeStrategies());
                 break;
             }
         }
     }
-    const unsigned int rows = 8;
-    const unsigned int lines = 9;
-    char gameMatrix[lines][rows];
+    //int gameMatrix[9][7];
     std::ifstream f(matrixFile);
     if (!f)
     {
         std::cout << "Неправильное имя файла\n";
         return;
     }
-    char c;
-    for (int i = 0; i < 12; i++) {
+    std::string c;
+    for (int i = 0; i < 6; i++) {
         f >> c;
     }
     for (int i = 1; i < 9; i++) {
-        for (int j = 0; j < 8; j++) {
+        for (int j = 0; j < 7; j++) {
             f >> c;
-            if (c != 'C' && c != 'D' && c != '=' && c != '>' && isdigit(c) == 0 && c != '0') {
+            if (c != "C" && c != "D" && c != "=>" && isDigit(c) == 0 && c != "0") {
                 std::cout << "Неправильный формат матрицы\n";
                 return;
             }
-            gameMatrix[i][j] = c;
+            if (isDigit(c)) {
+                gameMatrix[i][j] = makeInt(c);
+            }
+            else {
+                gameMatrix[i][j] = c[0];
+            }
         }
     }
     std::map <int, int> years;
+    std::vector<std::string> x;
     years[names[0]] = 0;
     years[names[1]] = 0;
     years[names[2]] = 0;
@@ -108,9 +130,10 @@ void Fast(std::vector <int> names, int steps, std::string matrixFile) {
                 x[i] += answerFirst;
                 x[i] += answerSecond;
                 x[i] += answerThird;
-                years[names[0]] += gameMatrix[j][5] - '0';
-                years[names[1]] += gameMatrix[j][6] - '0';
-                years[names[2]] += gameMatrix[j][7] - '0';
+                years[names[0]] += gameMatrix[j][4];
+                years[names[1]] += gameMatrix[j][5];
+                years[names[2]] += gameMatrix[j][6];
+                break;
             }
         }
     }
@@ -140,8 +163,8 @@ int main()
     std::cin >> mode;
     if (mode == "fast") {
         int steps;
-        std::cout << "Введите номера стратегий: \n 1 alwaysSayYes, \n 2  alwaysSayNo, \n" <<
-            " 3 random, \n 4  eyeForEye, \n 5  theWorseTheBetter, \n 6 theEqualizer \n";
+        std::cout << "Введите номера стратегий: \n 1 alwaysSayYes, \n 2 alwaysSayNo, \n" <<
+            " 3 random, \n 4 eyeForEye, \n 5 theWorseTheBetter, \n 6 theEqualizer \n";
         int name;
         for (int i = 0; i < 3; i++) {
             std::cin >> name;
@@ -156,8 +179,8 @@ int main()
         Fast(names, steps, matrixFile);
     }
     else if (mode == "detailed") {
-        std::cout << "Введите номера стратегий: \n 1 alwaysSayYes, \n 2  alwaysSayNo, \n" <<
-            " 3 random, \n 4  eyeForEye, \n 5  theWorseTheBetter, \n 6 theEqualizer \n";
+        std::cout << "Введите номера стратегий: \n 1 alwaysSayYes, \n 2 alwaysSayNo, \n" <<
+            " 3 random, \n 4 eyeForEye, \n 5 theWorseTheBetter, \n 6 theEqualizer \n";
         int name;
         for (int i = 0; i < 3; i++) {
             std::cin >> name;
@@ -178,8 +201,8 @@ int main()
             std::cout << "Неправильное количество стратегий";
             return 0;
         }
-        std::cout << "Введите номера стратегий: \n 1 alwaysSayYes, \n 2  alwaysSayNo, \n" <<
-            " 3 random, \n 4  eyeForEye, \n 5  theWorseTheBetter, \n 6 theEqualizer \n";
+        std::cout << "Введите номера стратегий: \n 1 alwaysSayYes, \n 2 alwaysSayNo, \n" <<
+            " 3 random, \n 4 eyeForEye, \n 5 theWorseTheBetter, \n 6 theEqualizer \n";
         int name;
         for (int i = 0; i < n; i++) {
             std::cin >> name;
