@@ -1,5 +1,5 @@
-//#include "ObjectFactory.h"
 #pragma once
+
 class Strategies {
 public:
 	//virtual ~Strategies() {};
@@ -90,6 +90,9 @@ class theEqualizer : public Strategies {
 		return 'C';
 	}
 };
+class ThePredictor : public Strategies {
+	char makeDecision(std::vector<std::string> x, int im);
+};
 class StrategiesFactory {
 public:
 	virtual Strategies* makeStrategies() = 0;
@@ -130,3 +133,79 @@ public:
 		return new theEqualizer();
 	}
 };
+class thePredictorFactory : public StrategiesFactory {
+public:
+	Strategies* makeStrategies() {
+		return new ThePredictor();
+	}
+};
+std::vector <Strategies*> MakePrisoners(std::vector <int> names) {
+	std::vector <Strategies*> Prisoner;
+	for (int i = 0; i < names.size(); i++) {
+		switch (names[i])
+		{
+		case 1:
+		{
+			alwaysSayYesFactory factory;
+			Prisoner.push_back(factory.makeStrategies());
+			break;
+		}
+		case 2:
+		{
+			alwaysSayNoFactory factory;
+			Prisoner.push_back(factory.makeStrategies());
+			break;
+		}
+		case 3:
+		{
+			randomFactory factory;
+			Prisoner.push_back(factory.makeStrategies());
+			break;
+		}
+		case 4:
+		{
+			eyeForEyeFactory factory;
+			Prisoner.push_back(factory.makeStrategies());
+			break;
+		}
+		case 5:
+		{
+			statisticianFactory factory;
+			Prisoner.push_back(factory.makeStrategies());
+			break;
+		}
+		case 6:
+		{
+			theEqualizerFactory factory;
+			Prisoner.push_back(factory.makeStrategies());
+			break;
+		}
+		case 7:
+		{
+			thePredictorFactory factory;
+			Prisoner.push_back(factory.makeStrategies());
+			break;
+		}
+		}
+	}
+	return Prisoner;
+}
+char ThePredictor::makeDecision(std::vector<std::string> x, int im) {
+	std::vector<int> names;
+	if (im == 1) { names.push_back(x[0][1]); names.push_back(x[0][2]); }
+	else if (im == 2) { names.push_back(x[0][0]); names.push_back(x[0][2]); }
+	else { names.push_back(x[0][0]); names.push_back(x[0][1]); }
+	names.push_back(2);
+	std::vector <Strategies*> Prisoner = MakePrisoners(names);
+	char answerFirst = (*Prisoner[0]).makeDecision(x, 1);
+	char answerSecond = (*Prisoner[1]).makeDecision(x, 2);
+	if (answerFirst == 'C' && answerSecond == 'C')
+		return 'C';
+	if (answerFirst == 'C' && answerSecond == 'D')
+		return 'D';
+	if (answerFirst == 'D' && answerSecond == 'C')
+		return 'C';
+	if (answerFirst == 'D' && answerSecond == 'D')
+		return 'D';
+	return 'C';
+}
