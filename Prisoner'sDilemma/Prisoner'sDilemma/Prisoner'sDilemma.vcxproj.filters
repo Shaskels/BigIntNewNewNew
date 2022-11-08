@@ -18,9 +18,12 @@
     <ClCompile Include="Prisoner%27sDilemma.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="Modes.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Strategies.h">
+    <ClInclude Include="Modes.h">
       <Filter>Исходные файлы</Filter>
     </ClInclude>
   </ItemGroup>

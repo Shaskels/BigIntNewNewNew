@@ -1,10 +1,19 @@
 #pragma once
-
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <map>
+void Fast(std::vector <int>, int, std::string);
+void Detailed(std::vector <int>, std::string);
+void Tournament(std::vector <int>, std::string);
 class Strategies {
 public:
 	//virtual ~Strategies() {};
 	virtual char makeDecision(std::vector<std::string>, int im) = 0;
 };
+std::vector <Strategies*> MakePrisoners(std::vector <int>);
 class alwaysSayYes : public Strategies {
 	char makeDecision(std::vector<std::string> x, int im) {
 		return 'C';
@@ -83,7 +92,7 @@ class theEqualizer : public Strategies {
 				}
 			}
 		}
-		if (yearsMe >= yearsFirst || yearsMe >= yearsSecond ) {
+		if (yearsMe >= yearsFirst || yearsMe >= yearsSecond) {
 			return 'C';
 		}
 		else return 'D';
@@ -91,7 +100,25 @@ class theEqualizer : public Strategies {
 	}
 };
 class ThePredictor : public Strategies {
-	char makeDecision(std::vector<std::string> x, int im);
+	char makeDecision(std::vector<std::string> x, int im){
+	std::vector<int> names;
+	if (im == 1) { names.push_back(x[0][1]); names.push_back(x[0][2]); }
+	else if (im == 2) { names.push_back(x[0][0]); names.push_back(x[0][2]); }
+	else { names.push_back(x[0][0]); names.push_back(x[0][1]); }
+	names.push_back(2);
+	std::vector <Strategies*> Prisoner = MakePrisoners(names);
+	char answerFirst = (*Prisoner[0]).makeDecision(x, 1);
+	char answerSecond = (*Prisoner[1]).makeDecision(x, 2);
+	if (answerFirst == 'C' && answerSecond == 'C')
+		return 'C';
+	if (answerFirst == 'C' && answerSecond == 'D')
+		return 'D';
+	if (answerFirst == 'D' && answerSecond == 'C')
+		return 'C';
+	if (answerFirst == 'D' && answerSecond == 'D')
+		return 'D';
+	return 'C';
+	}
 };
 class StrategiesFactory {
 public:
@@ -139,7 +166,7 @@ public:
 		return new ThePredictor();
 	}
 };
-std::vector <Strategies*> MakePrisoners(std::vector <int> names) {
+/*std::vector <Strategies*> MakePrisoners(std::vector <int> names) {
 	std::vector <Strategies*> Prisoner;
 	for (int i = 0; i < names.size(); i++) {
 		switch (names[i])
@@ -190,7 +217,7 @@ std::vector <Strategies*> MakePrisoners(std::vector <int> names) {
 	}
 	return Prisoner;
 }
-char ThePredictor::makeDecision(std::vector<std::string> x, int im) {
+/*char ThePredictor::makeDecision(std::vector<std::string> x, int im) {
 	std::vector<int> names;
 	if (im == 1) { names.push_back(x[0][1]); names.push_back(x[0][2]); }
 	else if (im == 2) { names.push_back(x[0][0]); names.push_back(x[0][2]); }
@@ -208,4 +235,4 @@ char ThePredictor::makeDecision(std::vector<std::string> x, int im) {
 	if (answerFirst == 'D' && answerSecond == 'D')
 		return 'D';
 	return 'C';
-}
+}*/

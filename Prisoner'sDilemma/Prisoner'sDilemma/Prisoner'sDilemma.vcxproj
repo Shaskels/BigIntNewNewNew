@@ -108,6 +108,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>D:\BigIntNewNewNew\Prisoner%27sDilemma\Prisoner%27sDilemma\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Modes.obj;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -127,10 +129,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Modes.cpp" />
     <ClCompile Include="Prisoner%27sDilemma.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Strategies.h" />
+    <ClInclude Include="Modes.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="GameMatrix1.txt" />
