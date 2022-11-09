@@ -1,13 +1,13 @@
 #include "pch.h"
 #include "..\Prisoner'sDilemma\Modes.h"
-std::vector<std::string> x = {"321", "CCD", "DCC", "DDC", "CCC"};
+std::vector<std::string> x = { "321", "CCD", "DCC", "DDC", "CCC" };
 TEST(Strateg, AlwaysSayYes_ReturnsYes) {
 	alwaysSayYesFactory factory;
 	Strategies* Prisoner = factory.makeStrategies();
 	char answer = (*Prisoner).makeDecision(x, 1);
 	ASSERT_EQ('C', answer);
 }
-/*TEST(Strateg, AlwaysSayNo_ReturnsNo) {
+TEST(Strateg, AlwaysSayNo_ReturnsNo) {
 	alwaysSayNoFactory factory;
 	Strategies* Prisoner = factory.makeStrategies();
 	char answer = Prisoner->makeDecision(x, 1);
@@ -65,4 +65,4 @@ TEST(Strateg, ThePredictor_ReturnsYes) {
 	Strategies* Prisoner = factory.makeStrategies();
 	char answer = Prisoner->makeDecision(x, 1);
 	ASSERT_EQ('C', answer);
-}*/
+}

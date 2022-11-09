@@ -179,9 +179,9 @@ void Detailed(std::vector <int> names, std::string matrixFile) {
     std::map <int, int> years;
     std::vector<std::string> x;
     x.push_back("");
-    x[0] += names[0] - '0';
-    x[0] += names[1] - '0';
-    x[0] += names[2] - '0';
+    x[0] += names[0];
+    x[0] += names[1];
+    x[0] += names[2];
     years[names[0]] = 0;
     years[names[1]] = 0;
     years[names[2]] = 0;
@@ -247,9 +247,10 @@ void Tournament(std::vector <int> names, std::string matrixFile) {
         for (int j = i + 1; j < names.size(); j++) {
             for (int k = j + 1; k < names.size(); k++) {
                 std::vector<std::string> x;
-                x[0] += names[0] - '0';
-                x[0] += names[1] - '0';
-                x[0] += names[2] - '0';
+                x.push_back("");
+                x[0] += names[0];
+                x[0] += names[1];
+                x[0] += names[2];
                 for (int h = 1; h < 4; h++) {
                     char answerFirst = (*Prisoner[i]).makeDecision(x, 1);
                     char answerSecond = (*Prisoner[j]).makeDecision(x, 2);
