@@ -6,84 +6,75 @@
 #include <vector>
 #include "Modes.h"
 
+std::map<std::string, int> namesStrategies = { {"AlwaysSayYes",1},{"AlwaysSayNo", 2},{"Random", 3},{"EyeForEye", 4},{"Statistician", 5}, {"TheEqualizer", 6}, {"ThePredictor", 7} };
 
-int main()
+int main(int argc, char* argv[])
 {
     setlocale(LC_ALL, "RUSSIAN");
+
+    std::string mode = "";
+    std::string matrixFile = "GameMatrix1.cpp";
+    std::string tmp;
     std::vector <int> names;
-    std::string mode;
-    std::string matrixFile;
-    std::cout << "Выберите режим: fast, detailed, tournament\n";
-    std::cin >> mode;
-    if (mode == "fast") {
-        int steps;
-        std::cout << "Введите номера стратегий: \n 1 alwaysSayYes, \n 2 alwaysSayNo, \n" <<
-            " 3 random, \n 4 eyeForEye, \n 5 Statistician, \n 6 theEqualizer \n 7 ThePredictor \n ";
-        int name;
-        for (int i = 0; i < 3; i++) {
-            std::cin >> name;
-            if (name > 7 || name < 1) {
-                std::cout << "Неправильный номер стратегии\n";
+    std::string directory;
+    int i;
+    for (i = 1; i < argc; i++) {
+        tmp = std::string(argv[i]);
+        if (tmp == "fast" || tmp == "detailed" || tmp == "tournament") {
+            mode = tmp;
+            break;
+        }
+        else {
+            if (namesStrategies.find(argv[i]) == namesStrategies.end()) {
+                std::cout << "Такой стратегии не нет";
                 return 0;
             }
-            for (int j = 0; j < names.size(); j++) {
-                if (name == names[j])
-                    std::cout << "Предупреждение! Вы уже вводили эту стратегию";
-            }
-            names.push_back(name);
+            else
+                names.push_back(namesStrategies[argv[i]]);
         }
-        std::cout << "Введите количество шагов симуляции\n";
-        std::cin >> steps;
-        std::cout << "Введите название файла с матрицей игры\n";
-        std::cin >> matrixFile;
-        Fast(names, steps, matrixFile);
+    }
+    if (mode == "") {
+        std::cout << "Неправильное название режима";
+        return 0;
+    }
+    if (names.size() < 3) {
+        std::cout << "Неправильное количество стратегий";
+        return 0;
+    }
+
+
+    if (mode == "fast") {
+        int steps = 6;
+        for (int j = i + 1; j < argc; j++) {
+            tmp = std::string(argv[j]);
+            if (isDigit(tmp))
+                steps = std::stoi(argv[j]);
+            else if (tmp.find(".") != std::string::npos)
+                matrixFile = tmp;
+            else
+                directory = tmp;
+        }
+        Fast(names, steps, matrixFile, directory);
     }
     else if (mode == "detailed") {
-        std::cout << "Введите номера стратегий: \n 1 alwaysSayYes, \n 2 alwaysSayNo, \n" <<
-            " 3 random, \n 4 eyeForEye, \n 5 Statistician, \n 6 theEqualizer \n 7 ThePredictor \n ";
-        int name;
-        for (int i = 0; i < 3; i++) {
-            std::cin >> name;
-            if (name > 7 || name < 1) {
-                std::cout << "Неправильный номер стратегии";
-                return 0;
-            }
-            for (int j = 0; j < names.size(); j++) {
-                if (name == names[j])
-                    std::cout << "Предупреждение! Вы уже вводили эту стратегию";
-            }
-            names.push_back(name);
+        for (int j = i + 1; j < argc; j++) {
+            tmp = std::string(argv[j]);
+            if (tmp.find(".") != std::string::npos)
+                matrixFile = tmp;
+            else
+                directory = tmp;
         }
-        std::cout << "Введите название файла с матрицей игры\n";
-        std::cin >> matrixFile;
-        Detailed(names, matrixFile);
+        Detailed(names, matrixFile, directory);
     }
     else if (mode == "tournament") {
-        std::cout << "Введите количество стратегий(от 3 до 6)";
-        int n;
-        std::cin >> n;
-        if (n > 7 || n < 3) {
-            std::cout << "Неправильное количество стратегий";
-            return 0;
+        for (int j = i + 1; j < argc; j++) {
+            tmp = std::string(argv[j]);
+            if (tmp.find(".") != std::string::npos)
+                matrixFile = tmp;
+            else
+                directory = tmp;
         }
-        std::cout << "Введите номера стратегий: \n 1 alwaysSayYes, \n 2 alwaysSayNo, \n" <<
-            " 3 random, \n 4 eyeForEye, \n 5 Statistician, \n 6 theEqualizer \n 7 ThePredictor \n ";
-        int name;
-        for (int i = 0; i < n; i++) {
-            std::cin >> name;
-            if (name > 7 || name < 1) {
-                std::cout << "Неправильный номер стратегии";
-                return 0;
-            }
-            for (int j = 0; j < names.size(); j++) {
-                if (name == names[j])
-                    std::cout << "Предупреждение! Вы уже вводили эту стратегию";
-            }
-            names.push_back(name);
-        }
-        std::cout << "Введите название файла с матрицей игры\n";
-        std::cin >> matrixFile;
-        Tournament(names, matrixFile);
+        Tournament(names, matrixFile, directory);
     }
     else {
         std::cout << "Неправильное название режима";

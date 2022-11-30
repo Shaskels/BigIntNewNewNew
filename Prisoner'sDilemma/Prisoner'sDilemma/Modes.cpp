@@ -1,6 +1,6 @@
 
 #include "Modes.h"
-int gameMatrix[9][7] = { 0 };
+int gameMatrix[8][7] = { {0},{0} };
 std::map<int, std::string> strategies = { {1,"AlwaysSayYes"},{2,"AlwaysSayNo"},{3,"Random"},{4,"EyeForEye"},{5,"Statistician"}, {6,"TheEqualizer"}, {7,"ThePredictor"} };
 /*enum strategies {
     AlwaysSayYes,
@@ -58,6 +58,8 @@ std::vector <Strategies*> MakePrisoners(std::vector <int> names) {
             Prisoner.push_back(factory.makeStrategies());
             break;
         }
+        default:
+            break;
         }
     }
     return Prisoner;
@@ -108,7 +110,7 @@ int MakeGameMatrix(std::string matrixFile) {
             return 1;
         }
     }
-    for (int i = 1; i < 9; i++) {
+    for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 7; j++) {
             try {
                 f.exceptions(std::ifstream::failbit | std::ifstream::badbit);
@@ -133,8 +135,11 @@ int MakeGameMatrix(std::string matrixFile) {
     f.close();
     return 0;
 }
-void Fast(std::vector <int> names, int steps, std::string matrixFile) {
+void Fast(std::vector <int> names, int steps, std::string matrixFile, std::string diractory) {
     std::vector <Strategies*> Prisoner = MakePrisoners(names);
+    if (Prisoner.size() < names.size()) {
+        std::cout << "Упс! Такой стартегии нет" << '\n';
+    }
     if (MakeGameMatrix(matrixFile) == 1)
         return;
     std::map <int, int> years;
@@ -147,10 +152,14 @@ void Fast(std::vector <int> names, int steps, std::string matrixFile) {
     years[names[1]] = 0;
     years[names[2]] = 0;
     for (int i = 1; i < steps + 1; i++) {
-        char answerFirst = (*Prisoner[0]).makeDecision(x, 1);
-        char answerSecond = (*Prisoner[1]).makeDecision(x, 2);
-        char answerThird = (*Prisoner[2]).makeDecision(x, 3);
-        for (int j = 1; j < 9; j++) {
+        char answerFirst = (*Prisoner[0]).makeDecision(x, 1, diractory);
+        char answerSecond = (*Prisoner[1]).makeDecision(x, 2, diractory);
+        char answerThird = (*Prisoner[2]).makeDecision(x, 3, diractory);
+        if (answerFirst == 1 || answerSecond == 1 || answerThird == 1) {
+            std::cout << "Невозможно прочитать конфгурационный файл\n";
+            return;
+        }
+        for (int j = 0; j < 8; j++) {
             if (answerFirst == gameMatrix[j][0] && answerSecond == gameMatrix[j][1] && answerThird == gameMatrix[j][2]) {
                 x.push_back("");
                 x[i] += answerFirst;
@@ -172,8 +181,11 @@ void Fast(std::vector <int> names, int steps, std::string matrixFile) {
         place++;
     }
 }
-void Detailed(std::vector <int> names, std::string matrixFile) {
+void Detailed(std::vector <int> names, std::string matrixFile, std::string diractory) {
     std::vector <Strategies*> Prisoner = MakePrisoners(names);
+    if (Prisoner.size() < names.size()) {
+        std::cout << "Упс! Такой стартегии нет" << '\n';
+    }
     if (MakeGameMatrix(matrixFile) == 1)
         return;
     std::map <int, int> years;
@@ -186,17 +198,21 @@ void Detailed(std::vector <int> names, std::string matrixFile) {
     years[names[1]] = 0;
     years[names[2]] = 0;
     std::string s;
-    std::cout << "Введите любой символ для начала симуляции, для выхода введите quit";
+    std::cout << "Введите любой символ для начала симуляции, для выхода введите quit\n";
     std::cin >> s;
     // system("pause");
     // getline(std::cin, s);
     int i = 1;
     while (s != "quit") {
-        char answerFirst = (*Prisoner[0]).makeDecision(x, 1);
-        char answerSecond = (*Prisoner[1]).makeDecision(x, 2);
-        char answerThird = (*Prisoner[2]).makeDecision(x, 3);
+        char answerFirst = (*Prisoner[0]).makeDecision(x, 1, diractory);
+        char answerSecond = (*Prisoner[1]).makeDecision(x, 2, diractory);
+        char answerThird = (*Prisoner[2]).makeDecision(x, 3, diractory);
+        if (answerFirst == 1 || answerSecond == 1 || answerThird == 1) {
+            std::cout << "Невозможно прочитать конфгурационный файл\n";
+            return;
+        }
         int j;
-        for (j = 1; j < 9; j++) {
+        for (j = 0; j < 8; j++) {
             if (answerFirst == gameMatrix[j][0] && answerSecond == gameMatrix[j][1] && answerThird == gameMatrix[j][2]) {
                 x.push_back("");
                 x[i] += answerFirst;
@@ -214,15 +230,12 @@ void Detailed(std::vector <int> names, std::string matrixFile) {
         for (it = years.begin(); it != years.end(); it++)
         {
             std::cout << "Стритегия " << strategies.find(it->first)->second << " \n       Принятое решение " << x[i][k] << '\n';
-            if (i == 1)
-                std::cout << "       Годы заключения: " << it->second << '\n';
-            else
-                std::cout << "       Годы заключения: " << it->second - gameMatrix[j][k + 4] << " + " << gameMatrix[j][k + 4] << '\n';
+            std::cout << "       Годы заключения: " << it->second << '\n';
             k++;
         }
         // system("pause");
        //  getline(std::cin, s);
-        std::cout << "Введите любой символ для продолжения, для выхода введите quit";
+        std::cout << "Введите любой символ для продолжения, для выхода введите quit\n";
         std::cin >> s;
         i++;
     }
@@ -235,8 +248,11 @@ void Detailed(std::vector <int> names, std::string matrixFile) {
         place++;
     }
 }
-void Tournament(std::vector <int> names, std::string matrixFile) {
+void Tournament(std::vector <int> names, std::string matrixFile, std::string diractory) {
     std::vector <Strategies*> Prisoner = MakePrisoners(names);
+    if (Prisoner.size() < names.size()) {
+        std::cout << "Упс! Такой стартегии нет" << '\n';
+    }
     if (MakeGameMatrix(matrixFile) == 1)
         return;
     std::map <int, int> years;
@@ -252,10 +268,14 @@ void Tournament(std::vector <int> names, std::string matrixFile) {
                 x[0] += names[1];
                 x[0] += names[2];
                 for (int h = 1; h < 4; h++) {
-                    char answerFirst = (*Prisoner[i]).makeDecision(x, 1);
-                    char answerSecond = (*Prisoner[j]).makeDecision(x, 2);
-                    char answerThird = (*Prisoner[k]).makeDecision(x, 3);
-                    for (int g = 1; g < 9; g++) {
+                    char answerFirst = (*Prisoner[i]).makeDecision(x, 1, diractory);
+                    char answerSecond = (*Prisoner[j]).makeDecision(x, 2, diractory);
+                    char answerThird = (*Prisoner[k]).makeDecision(x, 3, diractory);
+                    if (answerFirst == 1 || answerSecond == 1 || answerThird == 1) {
+                        std::cout << "Невозможно прочитать конфгурационный файл\n";
+                        return;
+                    }
+                    for (int g = 0; g < 8; g++) {
                         if (answerFirst == gameMatrix[g][0] && answerSecond == gameMatrix[g][1] && answerThird == gameMatrix[g][2]) {
                             x.push_back("");
                             x[h] += answerFirst;
