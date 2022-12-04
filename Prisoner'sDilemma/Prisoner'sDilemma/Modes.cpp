@@ -1,16 +1,10 @@
 
 #include "Modes.h"
-int gameMatrix[8][7] = { {0},{0} };
+
+int gameMatrix[MATRIX_LINES][MATRIX_ROWS] = { {0},{0} };
+
 std::map<int, std::string> strategies = { {1,"AlwaysSayYes"},{2,"AlwaysSayNo"},{3,"Random"},{4,"EyeForEye"},{5,"Statistician"}, {6,"TheEqualizer"}, {7,"ThePredictor"} };
-/*enum strategies {
-    AlwaysSayYes,
-    AlwaysSayNo,
-    Random,
-    EyeForEye,
-    Statistician,
-    TheEqualizer,
-    ThePredictor
-};*/
+
 std::vector <Strategies*> MakePrisoners(std::vector <int> names) {
     std::vector <Strategies*> Prisoner;
     for (int i = 0; i < names.size(); i++) {
@@ -92,37 +86,61 @@ int makeInt(std::string s) {
     }
     return t;
 }
+void printing(std::map <int, int> years) {
+    std::multimap<int, int> reverseYears = flip_map(years);
+    std::map<int, int> ::iterator it;
+    int place = 1;
+    for (it = reverseYears.begin(); it != reverseYears.end(); it++)
+    {
+        std::cout << "Место " << place << ": " << it->first << " лет заключения, стратегия " << strategies.find(it->second)->second << '\n';
+        place++;
+    }
+}
+void yearsUpdate(char* answers, int i, std::vector<std::string>& x, std::map <int, int>& years, std::vector <int> names) {
+    for (int j = 0; j < MATRIX_ROWS; j++) {
+        if (answers[FIRST_PRISONER] == gameMatrix[j][0] && answers[SECOND_PRINSONER] == gameMatrix[j][1] && answers[THIRD_PRISONER] == gameMatrix[j][2]) {
+            x.push_back("");
+            x[i] += answers[FIRST_PRISONER];
+            x[i] += answers[SECOND_PRINSONER];
+            x[i] += answers[THIRD_PRISONER];
+            years[names[FIRST_PRISONER]] += gameMatrix[j][MATRIX_YEARS_1];
+            years[names[SECOND_PRINSONER]] += gameMatrix[j][MATRIX_YEARS_2];
+            years[names[THIRD_PRISONER]] += gameMatrix[j][MATRIX_YEARS_3];
+            break;
+        }
+    }
+}
 int MakeGameMatrix(std::string matrixFile) {
     std::ifstream f(matrixFile);
     if (!f)
     {
         std::cout << "Неправильное имя файла\n";
-        return 1;
+        return ERROR_RES;
     }
     std::string c;
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < MATRIX_ROWS - 1; i++) {
         try {
             f.exceptions(std::ifstream::failbit | std::ifstream::badbit);
             f >> c;
         }
         catch (const std::ios_base::failure& fail) {
             std::cout << fail.what() << '\n';
-            return 1;
+            return ERROR_RES;
         }
     }
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 7; j++) {
+    for (int i = 0; i < MATRIX_LINES; i++) {
+        for (int j = 0; j < MATRIX_ROWS; j++) {
             try {
                 f.exceptions(std::ifstream::failbit | std::ifstream::badbit);
                 f >> c;
             }
             catch (const std::ios_base::failure& fail) {
                 std::cout << fail.what() << '\n';
-                return 1;
+                return ERROR_RES;
             }
             if (c != "C" && c != "D" && c != "=>" && isDigit(c) == 0 && c != "0") {
                 std::cout << "Неправильный формат матрицы\n";
-                return 1;
+                return ERROR_RES;
             }
             if (isDigit(c)) {
                 gameMatrix[i][j] = makeInt(c);
@@ -140,63 +158,46 @@ void Fast(std::vector <int> names, int steps, std::string matrixFile, std::strin
     if (Prisoner.size() < names.size()) {
         std::cout << "Упс! Такой стартегии нет" << '\n';
     }
-    if (MakeGameMatrix(matrixFile) == 1)
+    if (MakeGameMatrix(matrixFile) == ERROR_RES)
         return;
     std::map <int, int> years;
-    std::vector<std::string> x;
-    x.push_back("");
-    x[0] += names[0];
-    x[0] += names[1];
-    x[0] += names[2];
-    years[names[0]] = 0;
-    years[names[1]] = 0;
-    years[names[2]] = 0;
+    std::vector<std::string> stat;
+    stat.push_back("");
+    stat[0] += names[FIRST_PRISONER];
+    stat[0] += names[SECOND_PRINSONER];
+    stat[0] += names[THIRD_PRISONER];
+    years[names[FIRST_PRISONER]] = 0;
+    years[names[SECOND_PRINSONER]] = 0;
+    years[names[THIRD_PRISONER]] = 0;
     for (int i = 1; i < steps + 1; i++) {
-        char answerFirst = (*Prisoner[0]).makeDecision(x, 1, diractory);
-        char answerSecond = (*Prisoner[1]).makeDecision(x, 2, diractory);
-        char answerThird = (*Prisoner[2]).makeDecision(x, 3, diractory);
-        if (answerFirst == 1 || answerSecond == 1 || answerThird == 1) {
+        char answers[3];
+        answers[FIRST_PRISONER] = (*Prisoner[FIRST_PRISONER]).makeDecision(stat, FIRST_PRISONER, diractory);
+        answers[SECOND_PRINSONER] = (*Prisoner[SECOND_PRINSONER]).makeDecision(stat, SECOND_PRINSONER, diractory);
+        answers[THIRD_PRISONER] = (*Prisoner[THIRD_PRISONER]).makeDecision(stat, THIRD_PRISONER, diractory);
+        if (answers[0] == ERROR_RES || answers[1] == ERROR_RES || answers[2] == ERROR_RES) {
             std::cout << "Невозможно прочитать конфгурационный файл\n";
             return;
         }
-        for (int j = 0; j < 8; j++) {
-            if (answerFirst == gameMatrix[j][0] && answerSecond == gameMatrix[j][1] && answerThird == gameMatrix[j][2]) {
-                x.push_back("");
-                x[i] += answerFirst;
-                x[i] += answerSecond;
-                x[i] += answerThird;
-                years[names[0]] += gameMatrix[j][4];
-                years[names[1]] += gameMatrix[j][5];
-                years[names[2]] += gameMatrix[j][6];
-                break;
-            }
-        }
+        yearsUpdate(answers, i, stat, years, names);
     }
-    std::multimap<int, int> reverseYears = flip_map(years);
-    std::map<int, int> ::iterator it;
-    int place = 1;
-    for (it = reverseYears.begin(); it != reverseYears.end(); it++)
-    {
-        std::cout << "Место " << place << ": " << it->first << " лет заключения, стратегия " << strategies.find(it->second)->second << '\n';
-        place++;
-    }
+    printing(years);
 }
 void Detailed(std::vector <int> names, std::string matrixFile, std::string diractory) {
     std::vector <Strategies*> Prisoner = MakePrisoners(names);
     if (Prisoner.size() < names.size()) {
         std::cout << "Упс! Такой стартегии нет" << '\n';
     }
-    if (MakeGameMatrix(matrixFile) == 1)
+    if (MakeGameMatrix(matrixFile) == ERROR_RES)
         return;
     std::map <int, int> years;
-    std::vector<std::string> x;
-    x.push_back("");
-    x[0] += names[0];
-    x[0] += names[1];
-    x[0] += names[2];
-    years[names[0]] = 0;
-    years[names[1]] = 0;
-    years[names[2]] = 0;
+    std::vector<std::string> stat;
+    stat.push_back("");
+    stat[0] += names[FIRST_PRISONER];
+    stat[0] += names[SECOND_PRINSONER];
+    stat[0] += names[THIRD_PRISONER];
+    years[names[FIRST_PRISONER]] = 0;
+    years[names[SECOND_PRINSONER]] = 0;
+    years[names[THIRD_PRISONER]] = 0;
     std::string s;
     std::cout << "Введите любой символ для начала симуляции, для выхода введите quit\n";
     std::cin >> s;
@@ -204,32 +205,21 @@ void Detailed(std::vector <int> names, std::string matrixFile, std::string dirac
     // getline(std::cin, s);
     int i = 1;
     while (s != "quit") {
-        char answerFirst = (*Prisoner[0]).makeDecision(x, 1, diractory);
-        char answerSecond = (*Prisoner[1]).makeDecision(x, 2, diractory);
-        char answerThird = (*Prisoner[2]).makeDecision(x, 3, diractory);
-        if (answerFirst == 1 || answerSecond == 1 || answerThird == 1) {
+        char answers[3];
+        answers[FIRST_PRISONER] = (*Prisoner[FIRST_PRISONER]).makeDecision(stat, FIRST_PRISONER, diractory);
+        answers[SECOND_PRINSONER] = (*Prisoner[SECOND_PRINSONER]).makeDecision(stat, SECOND_PRINSONER, diractory);
+        answers[THIRD_PRISONER] = (*Prisoner[THIRD_PRISONER]).makeDecision(stat, THIRD_PRISONER, diractory);
+        if (answers[0] == ERROR_RES || answers[1] == ERROR_RES || answers[2] == ERROR_RES) {
             std::cout << "Невозможно прочитать конфгурационный файл\n";
             return;
         }
-        int j;
-        for (j = 0; j < 8; j++) {
-            if (answerFirst == gameMatrix[j][0] && answerSecond == gameMatrix[j][1] && answerThird == gameMatrix[j][2]) {
-                x.push_back("");
-                x[i] += answerFirst;
-                x[i] += answerSecond;
-                x[i] += answerThird;
-                years[names[0]] += gameMatrix[j][4];
-                years[names[1]] += gameMatrix[j][5];
-                years[names[2]] += gameMatrix[j][6];
-                break;
-            }
-        }
+        yearsUpdate(answers, i, stat, years, names);
         std::map<int, int> ::iterator it;
         int k = 0;
         std::cout << "Рейтинг: \n";
         for (it = years.begin(); it != years.end(); it++)
         {
-            std::cout << "Стритегия " << strategies.find(it->first)->second << " \n       Принятое решение " << x[i][k] << '\n';
+            std::cout << "Стритегия " << strategies.find(it->first)->second << " \n       Принятое решение " << stat[i][k] << '\n';
             std::cout << "       Годы заключения: " << it->second << '\n';
             k++;
         }
@@ -239,21 +229,14 @@ void Detailed(std::vector <int> names, std::string matrixFile, std::string dirac
         std::cin >> s;
         i++;
     }
-    std::multimap<int, int> reverseYears = flip_map(years);
-    std::map<int, int> ::iterator it;
-    int place = 1;
-    for (it = reverseYears.begin(); it != reverseYears.end(); it++)
-    {
-        std::cout << "Место " << place << ": " << it->first << " лет заключения, стратегия " << strategies.find(it->second)->second << '\n';
-        place++;
-    }
+    printing(years);
 }
 void Tournament(std::vector <int> names, std::string matrixFile, std::string diractory) {
     std::vector <Strategies*> Prisoner = MakePrisoners(names);
     if (Prisoner.size() < names.size()) {
         std::cout << "Упс! Такой стартегии нет" << '\n';
     }
-    if (MakeGameMatrix(matrixFile) == 1)
+    if (MakeGameMatrix(matrixFile) == ERROR_RES)
         return;
     std::map <int, int> years;
     for (int i = 0; i < names.size(); i++) {
@@ -262,41 +245,24 @@ void Tournament(std::vector <int> names, std::string matrixFile, std::string dir
     for (int i = 0; i < names.size(); i++) {
         for (int j = i + 1; j < names.size(); j++) {
             for (int k = j + 1; k < names.size(); k++) {
-                std::vector<std::string> x;
-                x.push_back("");
-                x[0] += names[0];
-                x[0] += names[1];
-                x[0] += names[2];
-                for (int h = 1; h < 4; h++) {
-                    char answerFirst = (*Prisoner[i]).makeDecision(x, 1, diractory);
-                    char answerSecond = (*Prisoner[j]).makeDecision(x, 2, diractory);
-                    char answerThird = (*Prisoner[k]).makeDecision(x, 3, diractory);
-                    if (answerFirst == 1 || answerSecond == 1 || answerThird == 1) {
+                std::vector<std::string> stat;
+                stat.push_back("");
+                stat[0] += names[FIRST_PRISONER];
+                stat[0] += names[SECOND_PRINSONER];
+                stat[0] += names[THIRD_PRISONER];
+                for (int h = 0; h < 3; h++) {
+                    char answers[3];
+                    answers[FIRST_PRISONER] = (*Prisoner[FIRST_PRISONER]).makeDecision(stat, FIRST_PRISONER, diractory);
+                    answers[SECOND_PRINSONER] = (*Prisoner[SECOND_PRINSONER]).makeDecision(stat, SECOND_PRINSONER, diractory);
+                    answers[THIRD_PRISONER] = (*Prisoner[THIRD_PRISONER]).makeDecision(stat, THIRD_PRISONER, diractory);
+                    if (answers[FIRST_PRISONER] == ERROR_RES || answers[SECOND_PRINSONER] == ERROR_RES || answers[THIRD_PRISONER] == ERROR_RES) {
                         std::cout << "Невозможно прочитать конфгурационный файл\n";
                         return;
                     }
-                    for (int g = 0; g < 8; g++) {
-                        if (answerFirst == gameMatrix[g][0] && answerSecond == gameMatrix[g][1] && answerThird == gameMatrix[g][2]) {
-                            x.push_back("");
-                            x[h] += answerFirst;
-                            x[h] += answerSecond;
-                            x[h] += answerThird;
-                            years[names[i]] += gameMatrix[g][4];
-                            years[names[j]] += gameMatrix[g][5];
-                            years[names[k]] += gameMatrix[g][6];
-                            break;
-                        }
-                    }
+                    yearsUpdate(answers, i, stat, years, names);
                 }
             }
         }
     }
-    std::multimap<int, int> reverseYears = flip_map(years);
-    std::map<int, int> ::iterator it;
-    int place = 1;
-    for (it = reverseYears.begin(); it != reverseYears.end(); it++)
-    {
-        std::cout << "Место " << place << ": " << it->first << " лет заключения, стратегия " << strategies.find(it->second)->second << '\n';
-        place++;
-    }
+    printing(years);
 }

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <boost/program_options.hpp>
 #include "Modes.h"
 
 std::map<std::string, int> namesStrategies = { {"AlwaysSayYes",1},{"AlwaysSayNo", 2},{"Random", 3},{"EyeForEye", 4},{"Statistician", 5}, {"TheEqualizer", 6}, {"ThePredictor", 7} };

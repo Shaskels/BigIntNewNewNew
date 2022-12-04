@@ -129,6 +129,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Input.cpp" />
     <ClCompile Include="Modes.cpp" />
     <ClCompile Include="Prisoner%27sDilemma.cpp" />
   </ItemGroup>

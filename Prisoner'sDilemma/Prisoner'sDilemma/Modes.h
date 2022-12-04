@@ -6,6 +6,15 @@
 #include <algorithm>
 #include <map>
 
+#define FIRST_PRISONER 0
+#define SECOND_PRINSONER 1
+#define THIRD_PRISONER 2
+#define MATRIX_YEARS_1 4
+#define MATRIX_YEARS_2 5
+#define MATRIX_YEARS_3 6
+#define MATRIX_LINES 8
+#define MATRIX_ROWS 7
+#define ERROR_RES 1
 
 void Fast(std::vector <int>, int, std::string, std::string diractory);
 void Detailed(std::vector <int>, std::string, std::string diractory);
@@ -65,9 +74,9 @@ class eyeForEye : public Strategies {
 			return answer;
 		}
 		int first, second;
-		if (im == 1) { first = 1; second = 2; }
-		else if (im == 2) { first = 0; second = 2; }
-		else { first = 0; second = 1; }
+		if (im == FIRST_PRISONER) { first = SECOND_PRINSONER; second = THIRD_PRISONER; }
+		else if (im == SECOND_PRINSONER) { first = FIRST_PRISONER; second = THIRD_PRISONER; }
+		else { first = FIRST_PRISONER; second = THIRD_PRISONER; }
 		if (x[x.size() - 1][first] == 'C' || x[x.size() - 1][second] == 'C')
 			return 'C';
 		return 'D';
@@ -100,9 +109,9 @@ class statistician : public Strategies {
 			return answer[0];
 		}
 		int first, second;
-		if (im == 1) { first = 1; second = 2; }
-		else if (im == 2) { first = 0; second = 2; }
-		else { first = 0; second = 1; }
+		if (im == FIRST_PRISONER) { first = SECOND_PRINSONER; second = THIRD_PRISONER; }
+		else if (im == SECOND_PRINSONER) { first = FIRST_PRISONER; second = THIRD_PRISONER; }
+		else { first = FIRST_PRISONER; second = THIRD_PRISONER; }
 		float probability1 = 0, probability2 = 0;
 		float one = 1;
 		for (int i = 0; i < x.size(); i++) {
@@ -112,7 +121,7 @@ class statistician : public Strategies {
 				probability2 += one / x.size();
 		}
 		float answer2 = answer[2] - '0';
-		if (probability1 >= answer2 / 10 || probability2 >= answer[2] / 10) {
+		if (probability1 >= answer2 / 10 || probability2 >= answer2 / 10) {
 			return 'C';
 		}
 		return 'D';
@@ -133,7 +142,6 @@ class theEqualizer : public Strategies {
 				f >> ch;
 				std::string num;
 				if (ch == '=') {
-					//f >> answer[i];
 					f >> ch;
 					while (isdigit(ch)) {
 						num.push_back(ch);
@@ -153,25 +161,25 @@ class theEqualizer : public Strategies {
 			return 'C';
 		}
 		int first, second;
-		if (im == 1) { first = 1; second = 2; }
-		else if (im == 2) { first = 0; second = 2; }
-		else { first = 0; second = 1; }
-		extern int gameMatrix[9][7];
-		for (int j = 0; j < 8; j++) {
-			if (x[x.size() - 1][first] == gameMatrix[j][first] && x[x.size() - 1][second] == gameMatrix[j][second] && x[x.size() - 1][im - 1] == gameMatrix[j][im - 1]) {
+		if (im == FIRST_PRISONER) { first = SECOND_PRINSONER; second = THIRD_PRISONER; }
+		else if (im == SECOND_PRINSONER) { first = FIRST_PRISONER; second = THIRD_PRISONER; }
+		else { first = FIRST_PRISONER; second = THIRD_PRISONER; }
+		extern int gameMatrix[MATRIX_LINES][MATRIX_ROWS];
+		for (int j = 0; j < MATRIX_LINES; j++) {
+			if (x[x.size() - 1][first] == gameMatrix[j][first] && x[x.size() - 1][second] == gameMatrix[j][second] && x[x.size() - 1][im] == gameMatrix[j][im - 1]) {
 				years[first] += gameMatrix[j][first + 4];
 				years[second] += gameMatrix[j][second + 4];
-				years[im - 1] += gameMatrix[j][im - 1 + 4];
+				years[im] += gameMatrix[j][im + 4];
 				break;
 			}
 		}
 		std::ofstream fout(diractory);
-		fout << "yearsFirst=" << years[0] << '\n';
-		fout << "yearsSecond=" << years[1] << '\n';
-		fout << "yearsThird=" << years[2] << "_\n";
+		fout << "yearsFirst=" << years[FIRST_PRISONER] << '\n';
+		fout << "yearsSecond=" << years[SECOND_PRINSONER] << '\n';
+		fout << "yearsThird=" << years[THIRD_PRISONER] << "_\n";
 
 		fout.close();
-		if (years[im - 1] >= years[first] || years[im - 1] >= years[second]) {
+		if (years[im] >= years[first] || years[im] >= years[second]) {
 			return 'C';
 		}
 		else return 'D';
@@ -201,13 +209,13 @@ class ThePredictor : public Strategies {
 		}
 		f.close();
 		std::vector<int> names;
-		if (im == 1) { names.push_back(x[0][1]); names.push_back(x[0][2]); }
-		else if (im == 2) { names.push_back(x[0][0]); names.push_back(x[0][2]); }
-		else { names.push_back(x[0][0]); names.push_back(x[0][1]); }
+		if (im == FIRST_PRISONER) { names.push_back(x[0][SECOND_PRINSONER]); names.push_back(x[0][THIRD_PRISONER]); }
+		else if (im == SECOND_PRINSONER) { names.push_back(x[0][FIRST_PRISONER]); names.push_back(x[0][THIRD_PRISONER]); }
+		else { names.push_back(x[0][FIRST_PRISONER]); names.push_back(x[0][SECOND_PRINSONER]); }
 		names.push_back(answer - '0');
 		std::vector <Strategies*> Prisoner = MakePrisoners(names);
-		char answerFirst = (*Prisoner[0]).makeDecision(x, 1, diractory);
-		char answerSecond = (*Prisoner[1]).makeDecision(x, 2, diractory);
+		char answerFirst = (*Prisoner[FIRST_PRISONER]).makeDecision(x, FIRST_PRISONER, diractory);
+		char answerSecond = (*Prisoner[SECOND_PRINSONER]).makeDecision(x, SECOND_PRINSONER, diractory);
 		if (answerFirst == 'C' && answerSecond == 'C')
 			return 'C';
 		if (answerFirst == 'C' && answerSecond == 'D')
