@@ -86,6 +86,20 @@ int makeInt(std::string s) {
     }
     return t;
 }
+void InitializationYearsAndStat(std::map <int, int>& years, std::vector<std::string>& stat, std::vector <int> names) {
+    stat.push_back("");
+    stat[0] += names[FIRST_PRISONER];
+    stat[0] += names[SECOND_PRINSONER];
+    stat[0] += names[THIRD_PRISONER];
+    years[names[FIRST_PRISONER]] = 0;
+    years[names[SECOND_PRINSONER]] = 0;
+    years[names[THIRD_PRISONER]] = 0;
+}
+void PrisonerAnswer(char answers[3], std::string diractory, std::vector <Strategies*> Prisoner, std::vector<std::string> stat) {
+    answers[FIRST_PRISONER] = (*Prisoner[FIRST_PRISONER]).makeDecision(stat, FIRST_PRISONER, diractory);
+    answers[SECOND_PRINSONER] = (*Prisoner[SECOND_PRINSONER]).makeDecision(stat, SECOND_PRINSONER, diractory);
+    answers[THIRD_PRISONER] = (*Prisoner[THIRD_PRISONER]).makeDecision(stat, THIRD_PRISONER, diractory);
+}
 void printing(std::map <int, int> years) {
     std::multimap<int, int> reverseYears = flip_map(years);
     std::map<int, int> ::iterator it;
@@ -162,18 +176,10 @@ void Fast(std::vector <int> names, int steps, std::string matrixFile, std::strin
         return;
     std::map <int, int> years;
     std::vector<std::string> stat;
-    stat.push_back("");
-    stat[0] += names[FIRST_PRISONER];
-    stat[0] += names[SECOND_PRINSONER];
-    stat[0] += names[THIRD_PRISONER];
-    years[names[FIRST_PRISONER]] = 0;
-    years[names[SECOND_PRINSONER]] = 0;
-    years[names[THIRD_PRISONER]] = 0;
+    InitializationYearsAndStat(years, stat, names);
     for (int i = 1; i < steps + 1; i++) {
         char answers[3];
-        answers[FIRST_PRISONER] = (*Prisoner[FIRST_PRISONER]).makeDecision(stat, FIRST_PRISONER, diractory);
-        answers[SECOND_PRINSONER] = (*Prisoner[SECOND_PRINSONER]).makeDecision(stat, SECOND_PRINSONER, diractory);
-        answers[THIRD_PRISONER] = (*Prisoner[THIRD_PRISONER]).makeDecision(stat, THIRD_PRISONER, diractory);
+        PrisonerAnswer(answers, diractory, Prisoner, stat);
         if (answers[0] == ERROR_RES || answers[1] == ERROR_RES || answers[2] == ERROR_RES) {
             std::cout << "Невозможно прочитать конфгурационный файл\n";
             return;
@@ -191,24 +197,14 @@ void Detailed(std::vector <int> names, std::string matrixFile, std::string dirac
         return;
     std::map <int, int> years;
     std::vector<std::string> stat;
-    stat.push_back("");
-    stat[0] += names[FIRST_PRISONER];
-    stat[0] += names[SECOND_PRINSONER];
-    stat[0] += names[THIRD_PRISONER];
-    years[names[FIRST_PRISONER]] = 0;
-    years[names[SECOND_PRINSONER]] = 0;
-    years[names[THIRD_PRISONER]] = 0;
+    InitializationYearsAndStat(years, stat, names);
     std::string s;
     std::cout << "Введите любой символ для начала симуляции, для выхода введите quit\n";
     std::cin >> s;
-    // system("pause");
-    // getline(std::cin, s);
     int i = 1;
     while (s != "quit") {
         char answers[3];
-        answers[FIRST_PRISONER] = (*Prisoner[FIRST_PRISONER]).makeDecision(stat, FIRST_PRISONER, diractory);
-        answers[SECOND_PRINSONER] = (*Prisoner[SECOND_PRINSONER]).makeDecision(stat, SECOND_PRINSONER, diractory);
-        answers[THIRD_PRISONER] = (*Prisoner[THIRD_PRISONER]).makeDecision(stat, THIRD_PRISONER, diractory);
+        PrisonerAnswer(answers, diractory, Prisoner, stat);
         if (answers[0] == ERROR_RES || answers[1] == ERROR_RES || answers[2] == ERROR_RES) {
             std::cout << "Невозможно прочитать конфгурационный файл\n";
             return;
@@ -223,8 +219,6 @@ void Detailed(std::vector <int> names, std::string matrixFile, std::string dirac
             std::cout << "       Годы заключения: " << it->second << '\n';
             k++;
         }
-        // system("pause");
-       //  getline(std::cin, s);
         std::cout << "Введите любой символ для продолжения, для выхода введите quit\n";
         std::cin >> s;
         i++;
@@ -252,9 +246,7 @@ void Tournament(std::vector <int> names, std::string matrixFile, std::string dir
                 stat[0] += names[THIRD_PRISONER];
                 for (int h = 0; h < 3; h++) {
                     char answers[3];
-                    answers[FIRST_PRISONER] = (*Prisoner[FIRST_PRISONER]).makeDecision(stat, FIRST_PRISONER, diractory);
-                    answers[SECOND_PRINSONER] = (*Prisoner[SECOND_PRINSONER]).makeDecision(stat, SECOND_PRINSONER, diractory);
-                    answers[THIRD_PRISONER] = (*Prisoner[THIRD_PRISONER]).makeDecision(stat, THIRD_PRISONER, diractory);
+                    PrisonerAnswer(answers, diractory, Prisoner, stat);
                     if (answers[FIRST_PRISONER] == ERROR_RES || answers[SECOND_PRINSONER] == ERROR_RES || answers[THIRD_PRISONER] == ERROR_RES) {
                         std::cout << "Невозможно прочитать конфгурационный файл\n";
                         return;
