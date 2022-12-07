@@ -129,11 +129,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Input.cpp" />
     <ClCompile Include="Modes.cpp" />
     <ClCompile Include="Prisoner%27sDilemma.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Input.h" />
     <ClInclude Include="Modes.h" />
   </ItemGroup>
   <ItemGroup>

@@ -91,3 +91,24 @@ TEST(Modes, MakeGameMatrix_ReturnsError) {
 	int k = MakeGameMatrix("GameMatrix2.txt");
 	ASSERT_EQ(1, k);
 }
+TEST(Modes, YearsUpdate_CheckX) {
+	std::vector<std::string> x;
+	MakeGameMatrix("GameMatrix1.txt");
+	std::vector <int> names = {3,5,1};
+	char answer[3] = {'C', 'D', 'C'};
+	std::map <int, int> years = { {3,0}, {5,0}, {1,0} };
+	yearsUpdate(answer, 0, x, years, names);
+	std::vector<std::string> rightX = {"CDC"};
+	ASSERT_EQ(rightX, x);
+}
+
+TEST(Modes, YearsUpdate_CheckYears) {
+	std::vector<std::string> x;
+	MakeGameMatrix("GameMatrix1.txt");
+	std::vector <int> names = { 3,5,1 };
+	char answer[3] = { 'C', 'D', 'C' };
+	std::map <int, int> years = { {3,0}, {5,0}, {1,0} };
+	yearsUpdate(answer, 0, x, years, names);
+	std::map <int, int> rightYears = { {3,3}, {5,10}, {1,3} };
+	ASSERT_EQ(rightYears, years);
+}

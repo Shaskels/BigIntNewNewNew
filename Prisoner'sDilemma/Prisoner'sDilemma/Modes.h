@@ -22,7 +22,7 @@ void Tournament(std::vector <int>, std::string, std::string diractory);
 bool isDigit(std::string);
 int makeInt(std::string);
 int MakeGameMatrix(std::string);
-
+void yearsUpdate(char*, int, std::vector<std::string>&, std::map <int, int>&, std::vector <int>);
 
 
 class Strategies {
