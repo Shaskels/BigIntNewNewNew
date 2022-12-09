@@ -8,4 +8,5 @@ int main(int argc, char* argv[])
     GetProgramOptions(argc, argv, in);
     AudioFile file1;
     load(in.files[0], file1);
+    save("out.wav", file1);
 }
