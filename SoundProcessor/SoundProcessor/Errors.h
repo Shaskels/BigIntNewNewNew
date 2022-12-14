@@ -1,6 +1,10 @@
 #pragma once
 #include <map>
 #include <string>
+
+#define ERROR_VALUE 0
+#define SUCCESS 1
+
 class Errors {
 public:
 	std::map <int, std::string> errors = {
@@ -21,6 +25,8 @@ public:
 	{16, "Error! Failed to get RIFF"},
 	{17,"Error! The file does not start with a RIFF"},
 	{18, "Error! Failed to get WAVE"},
-	{19,"Error! The file does not have WAVE"}
+	{19,"Error! The file does not have WAVE"},
+	{20,"Error! Incorrect argument values"},
+	{21,"Error! Configuration file don't open"}
 	};
 };

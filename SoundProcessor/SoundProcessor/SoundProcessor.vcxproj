@@ -131,6 +131,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioFile.h" />
+    <ClInclude Include="ConfigurationFile.h" />
     <ClInclude Include="Errors.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Сonverter.h" />

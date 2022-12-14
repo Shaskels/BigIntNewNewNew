@@ -32,6 +32,9 @@
     <ClInclude Include="Сonverter.h">
       <Filter>Исходные файлы</Filter>
     </ClInclude>
+    <ClInclude Include="ConfigurationFile.h">
+      <Filter>Исходные файлы</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
