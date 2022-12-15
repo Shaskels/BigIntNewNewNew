@@ -1,3 +1,0 @@
-yearsFirst=0
-yearsSecond=0
-yearsThird=0_

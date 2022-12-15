@@ -15,18 +15,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Prisoner%27sDilemma.cpp">
+    <ClCompile Include="PrisDillema.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="Modes.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-<<<<<<< Updated upstream
-=======
-    <ClCompile Include="Inpu.cpp">
+    <ClCompile Include="Input.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
->>>>>>> Stashed changes
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Modes.h">
@@ -35,19 +32,16 @@
     <ClInclude Include="Input.h">
       <Filter>Исходные файлы</Filter>
     </ClInclude>
-<<<<<<< Updated upstream
-=======
     <ClInclude Include="Factory.h">
       <Filter>Исходные файлы</Filter>
     </ClInclude>
->>>>>>> Stashed changes
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="GameMatrix1.txt">
       <Filter>Исходные файлы</Filter>
     </Text>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
 </Project>

@@ -5,6 +5,7 @@
 #include <vector>
 #include <algorithm>
 
+
 const std::string FAST_MODE = "fast";
 const std::string DETAILED_MODE = "detailed";
 const std::string TOURNAMENT_MODE = "tournament";

@@ -1,12 +1,17 @@
 #include "pch.h"
-#include "..\Prisoner'sDilemma\Modes.h"
+#include "..\PrisDillema\Modes.h"
+#include "..\PrisDillema\Factory.h"
+
 std::vector<std::string> x = { "321", "CCD", "DCC", "DDC", "CCC" };
 std::vector<std::string> y = { "312", "CDD", "DCD", "DDC", "DDD" };
+
+
 std::string diractory = "D:\\Configurationfiles";
+
 TEST(Strateg, AlwaysSayYes_ReturnsYes) {
 	alwaysSayYesFactory factory;
 	Strategies* Prisoner = factory.makeStrategies();
-	char answer = (*Prisoner).makeDecision(x, 1,diractory);
+	char answer = (*Prisoner).makeDecision(x, 1, diractory);
 	ASSERT_EQ('C', answer);
 }
 TEST(Strateg, AlwaysSayNo_ReturnsNo) {
@@ -24,13 +29,13 @@ TEST(Strateg, EyeForEyeFactory_ReturnsYes) {
 TEST(Strateg, EyeForEyeFactory_ReturnsNo) {
 	eyeForEyeFactory factory;
 	Strategies* Prisoner = factory.makeStrategies();
-	char answer = Prisoner->makeDecision(y, 1,diractory);
+	char answer = Prisoner->makeDecision(y, 1, diractory);
 	ASSERT_EQ('D', answer);
 }
 TEST(Strateg, Statistician_ReturnsYes) {
 	statisticianFactory factory;
 	Strategies* Prisoner = factory.makeStrategies();
-	char answer = Prisoner->makeDecision(x, 1,diractory);
+	char answer = Prisoner->makeDecision(x, 1, diractory);
 	ASSERT_EQ('C', answer);
 }
 TEST(Strateg, Statistician_ReturnsNo) {
@@ -60,12 +65,12 @@ TEST(Strateg, ThePredictor_ReturnsNo) {
 TEST(Strateg, ThePredictor_ReturnsYes) {
 	statisticianFactory factory;
 	Strategies* Prisoner = factory.makeStrategies();
-	char answer = Prisoner->makeDecision(y, 1,diractory);
+	char answer = Prisoner->makeDecision(y, 1, diractory);
 	ASSERT_EQ('D', answer);
 }
 TEST(Modes, MakePrisoners_Returns) {
 	std::vector <Strategies*> Prisoner;
-	std::vector <int> names = {1,3,4};
+	std::vector <int> names = { 1,3,4 };
 	alwaysSayYesFactory factory1;
 	Prisoner.push_back(factory1.makeStrategies());
 	randomFactory factory2;
@@ -73,9 +78,9 @@ TEST(Modes, MakePrisoners_Returns) {
 	eyeForEyeFactory factory3;
 	Prisoner.push_back(factory3.makeStrategies());
 	std::vector <Strategies*> P = MakePrisoners(names);
-	ASSERT_EQ((*Prisoner[0]).makeDecision(x, 1,diractory),(*P[0]).makeDecision(x,1,diractory));
-	ASSERT_EQ((*Prisoner[1]).makeDecision(x, 1,diractory), (*P[1]).makeDecision(x, 1, diractory));
-	ASSERT_EQ((*Prisoner[2]).makeDecision(x, 1, diractory), (*P[2]).makeDecision(x, 1,diractory));
+	ASSERT_EQ((*Prisoner[0]).makeDecision(x, 1, diractory), (*P[0]).makeDecision(x, 1, diractory));
+	ASSERT_EQ((*Prisoner[1]).makeDecision(x, 1, diractory), (*P[1]).makeDecision(x, 1, diractory));
+	ASSERT_EQ((*Prisoner[2]).makeDecision(x, 1, diractory), (*P[2]).makeDecision(x, 1, diractory));
 }
 TEST(Modes, IsDigit_ReturnsTrue) {
 	std::string c = "535";
@@ -90,25 +95,4 @@ TEST(Modes, IsDigit_ReturnsFalse) {
 TEST(Modes, MakeGameMatrix_ReturnsError) {
 	int k = MakeGameMatrix("GameMatrix2.txt");
 	ASSERT_EQ(1, k);
-}
-TEST(Modes, YearsUpdate_CheckX) {
-	std::vector<std::string> x;
-	MakeGameMatrix("GameMatrix1.txt");
-	std::vector <int> names = {3,5,1};
-	char answer[3] = {'C', 'D', 'C'};
-	std::map <int, int> years = { {3,0}, {5,0}, {1,0} };
-	yearsUpdate(answer, 0, x, years, names);
-	std::vector<std::string> rightX = {"CDC"};
-	ASSERT_EQ(rightX, x);
-}
-
-TEST(Modes, YearsUpdate_CheckYears) {
-	std::vector<std::string> x;
-	MakeGameMatrix("GameMatrix1.txt");
-	std::vector <int> names = { 3,5,1 };
-	char answer[3] = { 'C', 'D', 'C' };
-	std::map <int, int> years = { {3,0}, {5,0}, {1,0} };
-	yearsUpdate(answer, 0, x, years, names);
-	std::map <int, int> rightYears = { {3,3}, {5,10}, {1,3} };
-	ASSERT_EQ(rightYears, years);
 }
