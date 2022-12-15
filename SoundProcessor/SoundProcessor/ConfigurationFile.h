@@ -4,30 +4,32 @@
 #include <iostream>
 #include <fstream>
 #include "Errors.h"
-class ConfigurationFile {
-public:
-	std::vector<std::string> Converters;
-	std::vector<int> Times;
-	std::vector<int> Links;
+namespace Configs {
+	class ConfigurationFile {
+	public:
+		std::vector<std::string> Converters;
+		std::vector<int> Times;
+		std::vector<int> Links;
 
-	int getConfigs(std::string);
-};
-bool isDigit(std::string s) {
-	for (int i = 0; i < s.size(); i++) {
-		if (!isdigit(s[i]))
-			return false;
+		int getConfigs(std::string);
+	};
+	bool isDigit(std::string s) {
+		for (int i = 0; i < s.size(); i++) {
+			if (!isdigit(s[i]))
+				return false;
+		}
+		return true;
 	}
-	return true;
-}
-int makeInt(std::string s) {
-	int t = 0;
-	int level = 1;
-	for (int i = 0; i < s.size(); i++) {
-		t = (s[i] - '0') + t * 10;
+	int makeInt(std::string s) {
+		int t = 0;
+		int level = 1;
+		for (int i = 0; i < s.size(); i++) {
+			t = (s[i] - '0') + t * 10;
+		}
+		return t;
 	}
-	return t;
-}
-int getConfigs(std::string file, ConfigurationFile& conf) {
+	
+	int getConfigs(std::string file, ConfigurationFile& conf) {
 	Errors r;
 	std::ifstream f(file, std::ios_base::in);
 	if (!f) {
@@ -61,4 +63,5 @@ int getConfigs(std::string file, ConfigurationFile& conf) {
 		}
 	}
 	return SUCCESS;
+	}
 }

@@ -21,15 +21,8 @@ public:
 	std::vector<int16_t> samples;
 
 	AudioFile();
-	AudioFile(std::string);
 	int load(std::string);
 	int save(std::string);
-	uint32_t getSampleRate() const;
-	int getNumChannels() const;
-	int getBitDepth() const;
-	int getNumSamplesPerChannel() const;
-	double getLengthInSeconds() const;
-	void printSummary() const;
 };
 AudioFile::AudioFile() {
 	numChannels = 1;
@@ -108,11 +101,8 @@ int load(std::string fileName, AudioFile& f) {
 		f.subChunk2Size = convertToIntFourBytes(buf);
 
 		int16_t sample;
-		//std::vector<char> tmp;
 		for (int i = 0; i < f.subChunk2Size / 2; i++) {
 			if (!in.read(buf, 2))  throw 15;
-			//tmp.push_back(buf[0]);
-			//tmp.push_back(buf[1]);
 			sample = convertToIntTwoBytes(buf);
 			(f.samples).push_back(sample);
 		}
@@ -159,28 +149,44 @@ void writeToFile(std::vector<uint8_t>& buf, std::string fileName) {
 	out.close();
 }
 int save(std::string fileName, AudioFile f) {
-	std::vector<uint8_t> buf;
-	convertStringToChar(buf, "RIFF", 0);
-	convert32ToChar(buf, f.chunkSize, 4);
-	convertStringToChar(buf, "WAVE", 8);
-	convertStringToChar(buf, "fmt ", 12);
-	convert32ToChar(buf, f.subChunk1Size, 16);
-	convert16ToChar(buf, f.audioFormat, 20);
-	convert16ToChar(buf, f.numChannels, 22);
-	convert32ToChar(buf, f.sampleRate, 24);
-	convert32ToChar(buf, f.byteRate, 28);
-	convert16ToChar(buf, f.BlockAlign, 32);
-	convert16ToChar(buf, f.bitsPerSample, 34);
-	convertStringToChar(buf, "LIST", 36);
-	convert32ToChar(buf, f.subChunkList, 40);
-	for (int i = 0; i < f.subChunkList / 2; i++) {
-		convert16ToChar(buf, f.list[i], 44 + i * 2);
+	try {
+		std::vector<uint8_t> buf;
+		convertStringToChar(buf, "RIFF", 0);
+		if (f.chunkSize == 0) throw 3;
+		convert32ToChar(buf, f.chunkSize, 4);
+		convertStringToChar(buf, "WAVE", 8);
+		convertStringToChar(buf, "fmt ", 12);
+		if (f.subChunk1Size == 0) throw 6;
+		convert32ToChar(buf, f.subChunk1Size, 16);
+		if (f.audioFormat == 0) throw 7;
+		convert16ToChar(buf, f.audioFormat, 20);
+		if (f.numChannels == 0) throw 8;
+		convert16ToChar(buf, f.numChannels, 22);
+		if (f.sampleRate == 0) throw 9;
+		convert32ToChar(buf, f.sampleRate, 24);
+		if (f.byteRate == 0) throw 10;
+		convert32ToChar(buf, f.byteRate, 28);
+		if (f.BlockAlign == 0) throw 11;
+		convert16ToChar(buf, f.BlockAlign, 32);
+		if (f.bitsPerSample == 0) throw 12;
+		convert16ToChar(buf, f.bitsPerSample, 34);
+		convertStringToChar(buf, "LIST", 36);
+		convert32ToChar(buf, f.subChunkList, 40);
+		for (int i = 0; i < f.subChunkList / 2; i++) {
+			convert16ToChar(buf, f.list[i], 44 + i * 2);
+		}
+		convertStringToChar(buf, "data", 44 + f.subChunkList);
+		if (f.subChunk2Size == 0) throw 14;
+		convert32ToChar(buf, f.subChunk2Size, 48 + f.subChunkList);
+		for (int i = 0; i < f.subChunk2Size / 2; i++) {
+			convert16ToChar(buf, f.samples[i], 52 + f.subChunkList + i * 2);
+		}
+		writeToFile(buf, "out.wav");
 	}
-	convertStringToChar(buf, "data", 44 + f.subChunkList);
-	convert32ToChar(buf, f.subChunk2Size, 48 + f.subChunkList);
-	for (int i = 0; i < f.subChunk2Size / 2; i++) {
-		convert16ToChar(buf, f.samples[i], 52 + f.subChunkList + i * 2);
+	catch (int i) {
+		Errors r;
+		std::cerr << r.errors[i] << std::endl;
+		return 1;
 	}
-	writeToFile(buf, "out.wav");
 	return 0;
 }

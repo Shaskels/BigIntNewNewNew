@@ -17,16 +17,19 @@ public:
 	{8, "Error! Failed to get NumChannels"},
 	{9, "Error! Failed to get SampleRate"},
 	{10, "Error! Failed to get ByteRate"},
-	{11, "Error! Failed to get ByteRate"},
-	{12, "Error! Failed to get ByteRate"},
-	{13, "Error! Failed to get ByteRate"},
-	{14, "Error! Failed to get ByteRate"},
-	{15, "Error! Failed to get ByteRate"},
+	{11, "Error! Failed to get BlockAlign"},
+	{12, "Error! Failed to get BitsPerSample"},
+	{13, "Error! Failed to get data"},
+	{14, "Error! Failed to get subChunk2Size"},
+	{15, "Error! Failed to get samples"},
 	{16, "Error! Failed to get RIFF"},
 	{17,"Error! The file does not start with a RIFF"},
 	{18, "Error! Failed to get WAVE"},
 	{19,"Error! The file does not have WAVE"},
 	{20,"Error! Incorrect argument values"},
-	{21,"Error! Configuration file don't open"}
+	{21,"Error! The configuration file cannot be opened"},
+	{22,"Error! Few configuration file arguments"},
+	{23,"Error! There is no such converter" },
+	{24,"Error! Unable to save file"}
 	};
 };
