@@ -129,10 +129,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+<<<<<<< Updated upstream
+=======
+    <ClCompile Include="Inpu.cpp" />
+>>>>>>> Stashed changes
     <ClCompile Include="Modes.cpp" />
     <ClCompile Include="Prisoner%27sDilemma.cpp" />
   </ItemGroup>
   <ItemGroup>
+<<<<<<< Updated upstream
+=======
+    <ClInclude Include="Factory.h" />
+>>>>>>> Stashed changes
     <ClInclude Include="Input.h" />
     <ClInclude Include="Modes.h" />
   </ItemGroup>

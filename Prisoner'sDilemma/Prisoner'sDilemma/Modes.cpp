@@ -1,10 +1,15 @@
 
 #include "Modes.h"
+<<<<<<< Updated upstream
 
+=======
+#include "Factory.h"
+>>>>>>> Stashed changes
 int gameMatrix[MATRIX_LINES][MATRIX_ROWS] = { {0},{0} };
 
 std::map<int, std::string> strategies = { {1,"AlwaysSayYes"},{2,"AlwaysSayNo"},{3,"Random"},{4,"EyeForEye"},{5,"Statistician"}, {6,"TheEqualizer"}, {7,"ThePredictor"} };
 
+<<<<<<< Updated upstream
 std::vector <Strategies*> MakePrisoners(std::vector <int> names) {
     std::vector <Strategies*> Prisoner;
     for (int i = 0; i < names.size(); i++) {
@@ -54,6 +59,31 @@ std::vector <Strategies*> MakePrisoners(std::vector <int> names) {
         }
         default:
             break;
+=======
+Mode::Mode(std::vector <int> names, int p, std::string str, std::string dir) {
+    digitNames = names;
+    steps = p;
+    matrixFile = str;
+    diractory = dir;
+}
+std::vector <Strategies*> MakePrisoners(std::vector <int> names) {
+    std::vector<Strategies*> Prisoner;
+    std::vector<StrategiesFactory*> factory;
+    factory.push_back(new alwaysSayYesFactory);
+    factory.push_back(new alwaysSayNoFactory);
+    factory.push_back(new randomFactory);
+    factory.push_back(new eyeForEyeFactory);
+    factory.push_back(new statisticianFactory);
+    factory.push_back(new theEqualizerFactory);
+    factory.push_back(new thePredictorFactory);
+
+    for (int i = 0; i < names.size(); i++) {
+        for (int j = 0; j < factory.size(); j++) {
+            if ((*factory[j]).getStrategType() == names[i]) {
+                Prisoner.push_back(factory[j]->makeStrategies());
+                break;
+            }
+>>>>>>> Stashed changes
         }
     }
     return Prisoner;
@@ -95,7 +125,11 @@ void InitializationYearsAndStat(std::map <int, int>& years, std::vector<std::str
     years[names[SECOND_PRINSONER]] = 0;
     years[names[THIRD_PRISONER]] = 0;
 }
+<<<<<<< Updated upstream
 void PrisonerAnswer(char answers[3], std::string diractory, std::vector <Strategies*> Prisoner, std::vector<std::string> stat) {
+=======
+void PrisonerAnswer(char answers[NUMBER_OF_PRISONERS], std::string diractory, std::vector <Strategies*> Prisoner, std::vector<std::string> stat) {
+>>>>>>> Stashed changes
     answers[FIRST_PRISONER] = (*Prisoner[FIRST_PRISONER]).makeDecision(stat, FIRST_PRISONER, diractory);
     answers[SECOND_PRINSONER] = (*Prisoner[SECOND_PRINSONER]).makeDecision(stat, SECOND_PRINSONER, diractory);
     answers[THIRD_PRISONER] = (*Prisoner[THIRD_PRISONER]).makeDecision(stat, THIRD_PRISONER, diractory);
@@ -112,7 +146,11 @@ void printing(std::map <int, int> years) {
 }
 void yearsUpdate(char* answers, int i, std::vector<std::string>& x, std::map <int, int>& years, std::vector <int> names) {
     for (int j = 0; j < MATRIX_ROWS; j++) {
+<<<<<<< Updated upstream
         if (answers[FIRST_PRISONER] == gameMatrix[j][0] && answers[SECOND_PRINSONER] == gameMatrix[j][1] && answers[THIRD_PRISONER] == gameMatrix[j][2]) {
+=======
+        if (answers[FIRST_PRISONER] == gameMatrix[j][FIRST_PRISONER] && answers[SECOND_PRINSONER] == gameMatrix[j][SECOND_PRINSONER] && answers[THIRD_PRISONER] == gameMatrix[j][THIRD_PRISONER]) {
+>>>>>>> Stashed changes
             x.push_back("");
             x[i] += answers[FIRST_PRISONER];
             x[i] += answers[SECOND_PRINSONER];
@@ -167,15 +205,22 @@ int MakeGameMatrix(std::string matrixFile) {
     f.close();
     return 0;
 }
+<<<<<<< Updated upstream
 void Fast(std::vector <int> names, int steps, std::string matrixFile, std::string diractory) {
     std::vector <Strategies*> Prisoner = MakePrisoners(names);
     if (Prisoner.size() < names.size()) {
+=======
+void Mode::Fast() {
+    std::vector <Strategies*> Prisoner = MakePrisoners(digitNames);
+    if (Prisoner.size() < digitNames.size()) {
+>>>>>>> Stashed changes
         std::cout << "Упс! Такой стартегии нет" << '\n';
     }
     if (MakeGameMatrix(matrixFile) == ERROR_RES)
         return;
     std::map <int, int> years;
     std::vector<std::string> stat;
+<<<<<<< Updated upstream
     InitializationYearsAndStat(years, stat, names);
     for (int i = 1; i < steps + 1; i++) {
         char answers[3];
@@ -191,25 +236,54 @@ void Fast(std::vector <int> names, int steps, std::string matrixFile, std::strin
 void Detailed(std::vector <int> names, std::string matrixFile, std::string diractory) {
     std::vector <Strategies*> Prisoner = MakePrisoners(names);
     if (Prisoner.size() < names.size()) {
+=======
+    InitializationYearsAndStat(years, stat, digitNames);
+    for (int i = 1; i < steps + 1; i++) {
+        char answers[3];
+        PrisonerAnswer(answers, diractory, Prisoner, stat);
+        if (answers[THIRD_PRISONER] == ERROR_RES || answers[SECOND_PRINSONER] == ERROR_RES || answers[THIRD_PRISONER] == ERROR_RES) {
+            std::cout << "Невозможно прочитать конфгурационный файл\n";
+            return;
+        }
+        yearsUpdate(answers, i, stat, years, digitNames);
+    }
+    printing(years);
+}
+void Mode::Detailed() {
+    std::vector <Strategies*> Prisoner = MakePrisoners(digitNames);
+    if (Prisoner.size() < digitNames.size()) {
+>>>>>>> Stashed changes
         std::cout << "Упс! Такой стартегии нет" << '\n';
     }
     if (MakeGameMatrix(matrixFile) == ERROR_RES)
         return;
     std::map <int, int> years;
     std::vector<std::string> stat;
+<<<<<<< Updated upstream
     InitializationYearsAndStat(years, stat, names);
+=======
+    InitializationYearsAndStat(years, stat, digitNames);
+>>>>>>> Stashed changes
     std::string s;
     std::cout << "Введите любой символ для начала симуляции, для выхода введите quit\n";
     std::cin >> s;
     int i = 1;
+<<<<<<< Updated upstream
     while (s != "quit") {
+=======
+    while (s != KEY_WORD) {
+>>>>>>> Stashed changes
         char answers[3];
         PrisonerAnswer(answers, diractory, Prisoner, stat);
         if (answers[0] == ERROR_RES || answers[1] == ERROR_RES || answers[2] == ERROR_RES) {
             std::cout << "Невозможно прочитать конфгурационный файл\n";
             return;
         }
+<<<<<<< Updated upstream
         yearsUpdate(answers, i, stat, years, names);
+=======
+        yearsUpdate(answers, i, stat, years, digitNames);
+>>>>>>> Stashed changes
         std::map<int, int> ::iterator it;
         int k = 0;
         std::cout << "Рейтинг: \n";
@@ -225,14 +299,21 @@ void Detailed(std::vector <int> names, std::string matrixFile, std::string dirac
     }
     printing(years);
 }
+<<<<<<< Updated upstream
 void Tournament(std::vector <int> names, std::string matrixFile, std::string diractory) {
     std::vector <Strategies*> Prisoner = MakePrisoners(names);
     if (Prisoner.size() < names.size()) {
+=======
+void Mode::Tournament() {
+    std::vector <Strategies*> Prisoner = MakePrisoners(digitNames);
+    if (Prisoner.size() < digitNames.size()) {
+>>>>>>> Stashed changes
         std::cout << "Упс! Такой стартегии нет" << '\n';
     }
     if (MakeGameMatrix(matrixFile) == ERROR_RES)
         return;
     std::map <int, int> years;
+<<<<<<< Updated upstream
     for (int i = 0; i < names.size(); i++) {
         years[names[i]] = 0;
     }
@@ -246,12 +327,31 @@ void Tournament(std::vector <int> names, std::string matrixFile, std::string dir
                 stat[0] += names[THIRD_PRISONER];
                 for (int h = 0; h < 3; h++) {
                     char answers[3];
+=======
+    for (int i = 0; i < digitNames.size(); i++) {
+        years[digitNames[i]] = 0;
+    }
+    for (int i = 0; i < digitNames.size(); i++) {
+        for (int j = i + 1; j < digitNames.size(); j++) {
+            for (int k = j + 1; k < digitNames.size(); k++) {
+                std::vector<std::string> stat;
+                stat.push_back("");
+                stat[0] += digitNames[FIRST_PRISONER];
+                stat[0] += digitNames[SECOND_PRINSONER];
+                stat[0] += digitNames[THIRD_PRISONER];
+                for (int h = 0; h < NUMBER_OF_PRISONERS; h++) {
+                    char answers[NUMBER_OF_PRISONERS];
+>>>>>>> Stashed changes
                     PrisonerAnswer(answers, diractory, Prisoner, stat);
                     if (answers[FIRST_PRISONER] == ERROR_RES || answers[SECOND_PRINSONER] == ERROR_RES || answers[THIRD_PRISONER] == ERROR_RES) {
                         std::cout << "Невозможно прочитать конфгурационный файл\n";
                         return;
                     }
+<<<<<<< Updated upstream
                     yearsUpdate(answers, i, stat, years, names);
+=======
+                    yearsUpdate(answers, i, stat, years, digitNames);
+>>>>>>> Stashed changes
                 }
             }
         }

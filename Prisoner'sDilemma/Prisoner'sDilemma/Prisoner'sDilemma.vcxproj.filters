@@ -21,6 +21,12 @@
     <ClCompile Include="Modes.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+<<<<<<< Updated upstream
+=======
+    <ClCompile Include="Inpu.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+>>>>>>> Stashed changes
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Modes.h">
@@ -29,6 +35,12 @@
     <ClInclude Include="Input.h">
       <Filter>Исходные файлы</Filter>
     </ClInclude>
+<<<<<<< Updated upstream
+=======
+    <ClInclude Include="Factory.h">
+      <Filter>Исходные файлы</Filter>
+    </ClInclude>
+>>>>>>> Stashed changes
   </ItemGroup>
   <ItemGroup>
     <Text Include="GameMatrix1.txt">
