@@ -1,5 +1,6 @@
 #pragma once
-
+#include <vector>
+#include <string>
 namespace con {
 	class Converter {
 	public:
@@ -19,17 +20,21 @@ namespace con {
 	class ConverterFactory {
 	public:
 		virtual Converter* MakeConverter() = 0;
+		virtual std::vector<std::string> Reference() = 0;
 	};
 	class MuteTheIntervalFactory : public ConverterFactory {
 	public:
 		Converter* MakeConverter();
+		std::vector<std::string> Reference();
 	};
 	class MixerFactory : public ConverterFactory {
 	public:
 		Converter* MakeConverter();
+		std::vector<std::string> Reference();
 	};
 	class ReversFactory : public ConverterFactory {
 	public:
 		Converter* MakeConverter();
+		std::vector<std::string> Reference();
 	};
 }

@@ -1,5 +1,6 @@
 #pragma once
-
+#include <vector>
+#include <string>
 #include "Errors.h"
 namespace configs {
 	class ConfigurationFile {

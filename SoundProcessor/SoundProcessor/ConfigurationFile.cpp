@@ -21,10 +21,10 @@ int makeInt(std::string s) {
 }
 
 int configs::ConfigurationFile::getConfigs(std::string file, ConfigurationFile& conf) {
-	Errors r;
+	err::Errors r;
 	std::ifstream f(file, std::ios_base::in);
 	if (!f) {
-		std::cerr << r.errors[21] << std::endl;
+		std::cerr << r.ConfFileErr << std::endl;
 	}
 	std::string str;
 	std::string c;
