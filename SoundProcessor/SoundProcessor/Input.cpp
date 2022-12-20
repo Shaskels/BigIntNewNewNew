@@ -3,24 +3,14 @@
 #include <string>
 #include <vector>
 #include "Input.h"
-#include "Ñonverter.h"
+
 void showHelp() {
-    std::vector<con::ConverterFactory*> factory;
-    factory.push_back(new con::MuteTheIntervalFactory);
-    factory.push_back(new con::MixerFactory);
-    factory.push_back(new con::ReversFactory);
-    for (int i = 0; i < factory.size(); i++) {
-        std::vector<std::string> s = (*factory[i]).Reference();
-        for (int j = 0; j < s.size(); j++) {
-            std::string t = s[j];
-            std::cerr << t;
-        }
-    }
+    std::cout << "" << std::endl;
 }
 int np::Input::GetProgramOptions(const int argc, const char* const argv[]) {
-    err::Errors r;
+    Errors r;
     if (argc < 4) {
-        std::cerr << r.SaveFileErr << std::endl;
+        std::cerr << r.errors[24] << std::endl;
         return ERROR_VALUE;
     }
     std::vector<std::string> sours;
@@ -36,7 +26,7 @@ int np::Input::GetProgramOptions(const int argc, const char* const argv[]) {
         else if (sours[i].find("-c") != std::string::npos) continue;
         else if (sours[i].find("[") != std::string::npos) {
             if (sours[i][sours[i].size() - 1] != ']') {
-                std::cerr << r.CommandLineErr << std::endl;
+                std::cerr << r.errors[25] << std::endl;
                 return ERROR_VALUE;
             }
             sours[i].pop_back();

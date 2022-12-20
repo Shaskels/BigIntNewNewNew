@@ -2,14 +2,6 @@
 #include <vector>
 #include <string>
 namespace af {
-	const int TwoBytes = 2;
-	const int FourBytes = 4;
-	enum Bytes {
-		FirstByte,
-		SecondByte,
-		ThirdByte,
-		FourthByte
-	};
 	class AudioFile {
 		std::string fileName;
 		uint32_t chunkSize;
