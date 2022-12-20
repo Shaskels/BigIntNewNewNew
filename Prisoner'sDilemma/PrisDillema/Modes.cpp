@@ -4,12 +4,7 @@ int gameMatrix[MATRIX_LINES][MATRIX_ROWS] = { {0},{0} };
 
 std::map<int, std::string> strategies = { {1,"AlwaysSayYes"},{2,"AlwaysSayNo"},{3,"Random"},{4,"EyeForEye"},{5,"Statistician"}, {6,"TheEqualizer"}, {7,"ThePredictor"} };
 
-Mode::Mode(std::vector <int> names, int p, std::string str, std::string dir) {
-	digitNames = names;
-	steps = p;
-	matrixFile = str;
-	diractory = dir;
-}
+
 std::vector <Strategies*> MakePrisoners(std::vector <int> names) {
 	std::vector<Strategies*> Prisoner;
 	std::vector<StrategiesFactory*> factory;
@@ -143,7 +138,7 @@ int MakeGameMatrix(std::string matrixFile) {
 	f.close();
 	return 0;
 }
-void Mode::Fast() {
+void Fast::StartWith(std::vector <int> digitNames, int steps, std::string matrixFile, std::string diractory) {
 	std::vector <Strategies*> Prisoner = MakePrisoners(digitNames);
 	if (Prisoner.size() < digitNames.size()) {
 		std::cout << "Упс! Такой стратегии нет(" << '\n';
@@ -154,7 +149,7 @@ void Mode::Fast() {
 	std::vector<std::string> stat;
 	InitializationYearsAndStat(years, stat, digitNames);
 	for (int i = 1; i < steps + 1; i++) {
-		char answers[3];
+		char answers[NUMBER_OF_PRISONERS];
 		PrisonerAnswer(answers, diractory, Prisoner, stat);
 		if (answers[FIRST_PRISONER] == ERROR_RES || answers[SECOND_PRINSONER] == ERROR_RES || answers[THIRD_PRISONER] == ERROR_RES) {
 			std::cout << "Не удалось получить ответ заключенного\n";
@@ -165,7 +160,7 @@ void Mode::Fast() {
 	printing(years);
 }
 
-void Mode::Detailed() {
+void Detailed::StartWith(std::vector <int> digitNames, int steps, std::string matrixFile, std::string diractory) {
 	std::vector <Strategies*> Prisoner = MakePrisoners(digitNames);
 	if (Prisoner.size() < digitNames.size()) {
 
@@ -181,9 +176,9 @@ void Mode::Detailed() {
 	std::cin >> s;
 	int i = 1;
 	while (s != KEY_WORD) {
-		char answers[3];
+		char answers[NUMBER_OF_PRISONERS];
 		PrisonerAnswer(answers, diractory, Prisoner, stat);
-		if (answers[0] == ERROR_RES || answers[1] == ERROR_RES || answers[2] == ERROR_RES) {
+		if (answers[FIRST_PRISONER] == ERROR_RES || answers[SECOND_PRINSONER] == ERROR_RES || answers[THIRD_PRISONER] == ERROR_RES) {
 			std::cout << "Íåâîçìîæíî ïðî÷èòàòü êîíôãóðàöèîííûé ôàéë\n";
 			return;
 		}
@@ -191,11 +186,11 @@ void Mode::Detailed() {
 
 		std::map<int, int> ::iterator it;
 		int k = 0;
-		std::cout << "Ðåéòèíã: \n";
+		std::cout << "Статистика: \n";
 		for (it = years.begin(); it != years.end(); it++)
 		{
-			std::cout << "Ñòðèòåãèÿ " << strategies.find(it->first)->second << " \n       Ïðèíÿòîå ðåøåíèå " << stat[i][k] << '\n';
-			std::cout << "       Ãîäû çàêëþ÷åíèÿ: " << it->second << '\n';
+			std::cout << "Стратегия " << strategies.find(it->first)->second << " \n       Принятое решение " << stat[i][k] << '\n';
+			std::cout << "       Лет заключения: " << it->second << '\n';
 			k++;
 		}
 		std::cout << "Нажмите любую клавишу чтобы продолжить, для выхода введите quit\n";
@@ -204,7 +199,7 @@ void Mode::Detailed() {
 	}
 	printing(years);
 }
-void Mode::Tournament() {
+void Tournament::StartWith(std::vector <int> digitNames, int steps, std::string matrixFile, std::string diractory) {
 	std::vector <Strategies*> Prisoner = MakePrisoners(digitNames);
 	if (Prisoner.size() < digitNames.size()) {
 		std::cout << "Упс! Такой стратегии нет(" << '\n';

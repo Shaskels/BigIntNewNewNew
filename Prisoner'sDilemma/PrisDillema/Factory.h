@@ -6,9 +6,6 @@
 #include <algorithm>
 
 
-const std::string FAST_MODE = "fast";
-const std::string DETAILED_MODE = "detailed";
-const std::string TOURNAMENT_MODE = "tournament";
 const std::string KEY_WORD = "quit";
 const int NUMBER_OF_PRISONERS = 3;
 const int FIRST_PRISONER = 0;
@@ -76,7 +73,7 @@ class eyeForEye : public Strategies {
 				}
 			}
 			catch (const std::ios_base::failure& fail) {
-				std::cout << fail.what() << '\n';
+				std::cout << fail.what() << '\n' << "”казана неправильна€ директори€\n";
 				return 1;
 			}
 		}
@@ -95,13 +92,12 @@ class eyeForEye : public Strategies {
 };
 class statistician : public Strategies {
 	char makeDecision(std::vector<std::string> x, int im, std::string diractory) {
-		const size_t numberOfAnswers = 3;
-		char answer[numberOfAnswers];
+		char answer[NUMBER_OF_PRISONERS];
 		char ch;
 		int i = 0;
 		diractory += DoubleSlash + StatisticianFile;
 		std::ifstream f(diractory);
-		while (i != numberOfAnswers) {
+		while (i != NUMBER_OF_PRISONERS) {
 			try {
 				f.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 				f >> ch;
@@ -111,13 +107,13 @@ class statistician : public Strategies {
 				}
 			}
 			catch (const std::ios_base::failure& fail) {
-				std::cout << fail.what() << '\n';
+				std::cout << fail.what() << '\n' << "”казана неправильна€ директори€\n";
 				return 1;
 			}
 		}
 		f.close();
 		if (x.size() == 1) {
-			return answer[0];
+			return answer[first - 0];
 		}
 		int first, second;
 		if (im == FIRST_PRISONER) { first = SECOND_PRINSONER; second = THIRD_PRISONER; }
@@ -126,12 +122,12 @@ class statistician : public Strategies {
 		float probability1 = 0, probability2 = 0;
 		float one = 1;
 		for (int i = 0; i < x.size(); i++) {
-			if (x[i][first] == answer[1])
+			if (x[i][first] == answer[first])
 				probability1 += one / x.size();
-			if (x[i][second] == answer[1])
+			if (x[i][second] == answer[first])
 				probability2 += one / x.size();
 		}
-		float answer2 = answer[2] - '0';
+		float answer2 = answer[second] - '0';
 		if (probability1 >= answer2 / 10 || probability2 >= answer2 / 10) {
 			return 'C';
 		}
@@ -145,7 +141,7 @@ class theEqualizer : public Strategies {
 		int i = 0;
 		diractory += DoubleSlash + TheEqualizerFile;
 		std::ifstream f(diractory);
-		int years[3];
+		int years[NUMBER_OF_PRISONERS];
 		while (i != NUMBER_OF_PRISONERS) {
 			try {
 				f.exceptions(std::ifstream::failbit | std::ifstream::badbit);
@@ -162,7 +158,7 @@ class theEqualizer : public Strategies {
 				}
 			}
 			catch (const std::ios_base::failure& fail) {
-				std::cout << fail.what() << '\n';
+				std::cout << fail.what() << '\n' << "”казана неправильна€ директори€\n";
 				return 1;
 			}
 		}
@@ -213,15 +209,15 @@ class ThePredictor : public Strategies {
 				}
 			}
 			catch (const std::ios_base::failure& fail) {
-				std::cout << fail.what() << '\n';
+				std::cout << fail.what() << '\n' << "”казана неправильна€ директори€\n";
 				return 1;
 			}
 		}
 		f.close();
 		std::vector<int> names;
-		if (im == FIRST_PRISONER) { names.push_back(x[0][SECOND_PRINSONER]); names.push_back(x[0][THIRD_PRISONER]); }
-		else if (im == SECOND_PRINSONER) { names.push_back(x[0][FIRST_PRISONER]); names.push_back(x[0][THIRD_PRISONER]); }
-		else { names.push_back(x[0][FIRST_PRISONER]); names.push_back(x[0][SECOND_PRINSONER]); }
+		if (im == FIRST_PRISONER) { names.push_back(x[first - 1][SECOND_PRINSONER]); names.push_back(x[first - 1][THIRD_PRISONER]); }
+		else if (im == SECOND_PRINSONER) { names.push_back(x[first - 1][FIRST_PRISONER]); names.push_back(x[first - 1][THIRD_PRISONER]); }
+		else { names.push_back(x[first - 1][FIRST_PRISONER]); names.push_back(x[first - 1][SECOND_PRINSONER]); }
 		names.push_back(answer - '0');
 		std::vector <Strategies*> Prisoner = MakePrisoners(names);
 		char answerFirst = (*Prisoner[FIRST_PRISONER]).makeDecision(x, FIRST_PRISONER, diractory);

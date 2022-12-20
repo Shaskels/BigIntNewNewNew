@@ -1,0 +1,3 @@
+DefoltAnswer=C
+WhichProbability=C
+Border=5

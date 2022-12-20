@@ -5,6 +5,8 @@
 #include "Input.h"
 #include "Factory.h"
 
+const int NUMBER_OF_MODES = 3;
+
 int main(int argc, char* argv[])
 {
 	setlocale(LC_ALL, "RUSSIAN");
@@ -25,22 +27,17 @@ int main(int argc, char* argv[])
 		}
 		else digitNames.push_back(in.namesStrategies[in.names[i]]);
 	}
-
-	if (in.mode == FAST_MODE) {
-		Mode mode = Mode(digitNames, in.steps, in.matrixFile, in.directory);
-		mode.Fast();
+	std::vector<ModeFactory*> factory;
+	factory.push_back(new FastFactory);
+	factory.push_back(new DetailedFactory);
+	factory.push_back(new TournamentFactory);
+	for (int i = 0; i < NUMBER_OF_MODES; i++) {
+		if (factory[i]->NameOfMode() == in.mode) {
+			Mode* m = factory[i]->MakeMode();
+			m->StartWith(digitNames, in.steps, in.matrixFile, in.directory);
+			return 0;
+		}
 	}
-	else if (in.mode == DETAILED_MODE) {
-		Mode mode = Mode(digitNames, in.steps, in.matrixFile, in.directory);
-		mode.Detailed();
-	}
-	else if (in.mode == TOURNAMENT_MODE) {
-		Mode mode = Mode(digitNames, in.steps, in.matrixFile, in.directory);
-		mode.Tournament();
-	}
-	else {
-		std::cout << "Неправильное название режима";
-		return 0;
-	}
+	std::cout << "Неправильное название режима";
 	return 0;
 }

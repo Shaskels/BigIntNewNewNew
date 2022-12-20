@@ -6,7 +6,7 @@ std::vector<std::string> x = { "321", "CCD", "DCC", "DDC", "CCC" };
 std::vector<std::string> y = { "312", "CDD", "DCD", "DDC", "DDD" };
 
 
-std::string diractory = "D:\\Configurationfiles";
+std::string diractory = "..";
 
 TEST(Strateg, AlwaysSayYes_ReturnsYes) {
 	alwaysSayYesFactory factory;

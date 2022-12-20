@@ -52,6 +52,20 @@
       <Project>{9b606531-baf5-42bc-bab9-8f81752c075f}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Statistician.txt">
+      <DeploymentContent>true</DeploymentContent>
+    </Text>
+    <Text Include="TheEqualizer.txt">
+      <DeploymentContent>true</DeploymentContent>
+    </Text>
+    <Text Include="ThePredictor.txt">
+      <DeploymentContent>true</DeploymentContent>
+    </Text>
+    <Text Include="x64\EyeForEye.txt">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </Text>
+  </ItemGroup>
   <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
@@ -87,7 +101,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>D:\BigIntNewNewNew\Prisoner%27sDilemma\PrisDillema\x64\Debug;D:\всякая фигня%28возможно полезная%29\Прога\PrisDillema\PrisDillema\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\BigIntNewNewNew\Prisoner%27sDilemma\PrisDillema\x64\Debug;D:\BigIntNewNewNew\Prisoner%27sDilemma;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>Modes.obj;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
