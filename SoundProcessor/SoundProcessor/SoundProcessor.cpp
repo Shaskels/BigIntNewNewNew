@@ -4,6 +4,17 @@
 #include "AudioFile.h"
 #include "Сonverter.h"
 #include "ConfigurationFile.h"
+<<<<<<< Updated upstream
+=======
+#include "Processor.h"
+
+int const MIN_SIZE_MUTE = 2;
+int const MIN_SIZE_MIX = 1;
+
+std::string MUTE_CONVERTER = "mute";
+std::string MIX_CONVERTER = "mix";
+std::string REVERS_CONVERTER = "revers";
+>>>>>>> Stashed changes
 
 int main(int argc, char* argv[])
 {
