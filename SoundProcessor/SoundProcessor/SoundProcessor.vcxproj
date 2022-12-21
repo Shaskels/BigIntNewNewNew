@@ -127,6 +127,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AudioFile.cpp" />
+    <ClCompile Include="ConfigurationFile.cpp" />
+    <ClCompile Include="Converter.cpp" />
+    <ClCompile Include="Input.cpp" />
+    <ClCompile Include="Processor.cpp" />
     <ClCompile Include="SoundProcessor.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -134,6 +139,7 @@
     <ClInclude Include="ConfigurationFile.h" />
     <ClInclude Include="Errors.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="Processor.h" />
     <ClInclude Include="Сonverter.h" />
   </ItemGroup>
   <ItemGroup>
