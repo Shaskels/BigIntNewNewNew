@@ -1,3 +1,0 @@
-yearsFirst=56
-yearsSecond=0
-yearsThird=70_
