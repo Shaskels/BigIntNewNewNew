@@ -2,8 +2,8 @@
 #include <map>
 #include <string>
 
-#define ERROR_VALUE 0
-#define SUCCESS 1
+int const ERROR_VALUE = 0;
+int const SUCCESS = 1;
 namespace err {
 	class Errors {
 	public:

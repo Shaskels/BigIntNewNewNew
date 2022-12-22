@@ -5,7 +5,8 @@
 #include <string>
 #include "Errors.h"
 
-af::AudioFile::AudioFile(std::ifstream& i) : in(i) {
+af::AudioFile::AudioFile(){
+	in = NULL;
 	numChannels = 1;
 	sampleRate = 44100;
 	byteRate = 16;
@@ -31,19 +32,20 @@ int32_t convertToIntFourBytes(char* buf) {
 }
 int af::AudioFile::readSamples() {
 	int16_t sample;
-	char buf[af::TwoBytes] = { 0 };
+	char buf[af::FourBytes] = { 0 };
 	err::Errors r;
 	try{
 		samples.erase(samples.begin(), samples.end());
-		for (int i = 0; i < sampleRate; i++) {
-			if (!in.read(buf, af::TwoBytes))
+		for (int i = 0; i < std::min(sampleRate, readOut / 2); i++) {
+			if (!(*in).read(buf, af::TwoBytes))
 				throw r.SamplesErr;
 			sample = convertToIntTwoBytes(buf);
 			(samples).push_back(sample);
 		}
+		readOut = readOut - sampleRate * 2;
 	}
 	catch (std::string s) {
-		in.close();
+		(*in).close();
 		std::cerr << s << std::endl;
 		return 1;
 	}
@@ -51,62 +53,65 @@ int af::AudioFile::readSamples() {
 }
 int af::AudioFile::load(std::string fileName) {
 	err::Errors r;
+	in = new std::ifstream(fileName, std::ios_base::binary);
 	//in.open(fileName, std::ios_base::binary);
 	try {
-		if (!in.good()) throw r.openErr;
+		if (!(*in).good()) throw r.openErr;
 		char buf[af::FourBytes] = { 0 };
-		if (!in.read(buf, af::FourBytes)) throw r.NoRIFFErr; // RIFF
+		if (!(*in).read(buf, af::FourBytes)) throw r.NoRIFFErr; // RIFF
 		if (buf[0] != 'R' || buf[1] != 'I' || buf[2] != 'F' || buf[3] != 'F')
 			throw r.NoRIFFErr;
 
-		if (!in.read(buf, af::FourBytes)) throw r.ChunkSizeErr;
+		if (!(*in).read(buf, af::FourBytes)) throw r.ChunkSizeErr;
 		chunkSize = convertToIntFourBytes(buf);
 
-		if (!in.read(buf, af::FourBytes)) throw r.NoWAVEErr; // WAVE
+		if (!(*in).read(buf, af::FourBytes)) throw r.NoWAVEErr; // WAVE
 		if (buf[0] != 'W' || buf[1] != 'A' || buf[2] != 'V' || buf[3] != 'E')
 			throw 19;
 
-		if (!in.read(buf, af::FourBytes)) throw r.Subchunk1IDErr;
-		if (!in.read(buf, af::FourBytes)) throw r.Subchunk1SizeErr;
+		if (!(*in).read(buf, af::FourBytes)) throw r.Subchunk1IDErr;
+		if (!(*in).read(buf, af::FourBytes)) throw r.Subchunk1SizeErr;
 		subChunk1Size = convertToIntFourBytes(buf);
 
-		if (!in.read(buf, af::TwoBytes)) throw r.AudioFormatErr;
+		if (!(*in).read(buf, af::TwoBytes)) throw r.AudioFormatErr;
 		audioFormat = convertToIntTwoBytes(buf);
 
-		if (!in.read(buf, af::TwoBytes)) throw r.NumChannelsErr;
+		if (!(*in).read(buf, af::TwoBytes)) throw r.NumChannelsErr;
 		numChannels = convertToIntTwoBytes(buf);
 
-		if (!in.read(buf, af::FourBytes)) throw r.SampleRateErr;
+		if (!(*in).read(buf, af::FourBytes)) throw r.SampleRateErr;
 		sampleRate = convertToIntFourBytes(buf);
 
-		if (!in.read(buf, af::FourBytes)) throw r.ByteRateErr;
+		if (!(*in).read(buf, af::FourBytes)) throw r.ByteRateErr;
 		byteRate = convertToIntFourBytes(buf);
 
-		if (!in.read(buf, af::TwoBytes)) throw r.BlockAlignErr;
+		if (!(*in).read(buf, af::TwoBytes)) throw r.BlockAlignErr;
 		BlockAlign = convertToIntTwoBytes(buf);
-		if (!in.read(buf, af::TwoBytes)) throw r.BitsPerSampleErr;
+		if (!(*in).read(buf, af::TwoBytes)) throw r.BitsPerSampleErr;
 		bitsPerSample = convertToIntTwoBytes(buf);
 
 		int16_t lst;
-		if (!in.read(buf, af::FourBytes)) throw r.DataErr;
+		if (!(*in).read(buf, af::FourBytes)) throw r.DataErr;
 		while (buf[0] != 'd' && buf[1] != 'a' && buf[2] != 't' && buf[3] != 'a') {
-			if (!in.read(buf, af::FourBytes)) throw r.DataErr;
+			if (!(*in).read(buf, af::FourBytes)) throw r.DataErr;
 			subChunkList = convertToIntFourBytes(buf);
 			for (int i = 0; i < subChunkList / af::TwoBytes; i++) {
-				if (!in.read(buf, af::TwoBytes)) throw r.DataErr;
+				if (!(*in).read(buf, af::TwoBytes)) throw r.DataErr;
 				lst = convertToIntTwoBytes(buf);
 				list.push_back(lst);
 			}
-			if (!in.read(buf, af::FourBytes)) throw r.DataErr;
+			if (!(*in).read(buf, af::FourBytes)) throw r.DataErr;
 		}
-		if (!in.read(buf, af::FourBytes)) throw r.subChunk2SizeErr;
+		if (!(*in).read(buf, af::FourBytes)) throw r.subChunk2SizeErr;
 		subChunk2Size = convertToIntFourBytes(buf);
+
+		readOut = subChunk2Size;
 		readSamples();
 		//in.close();
 	}
 	catch (std::string i) {
 		//Errors r;
-		in.close();
+		(*in).close();
 		std::cerr << i << std::endl;
 		return 1;
 	}
@@ -138,17 +143,15 @@ void convertStringToChar(std::vector<uint8_t>& buf, std::string x, int startInde
 void af::AudioFile::writeToFile(std::string fileName) {
 	err::Errors r;
 	std::vector<uint8_t> buf;
-	for (int i = 0; i < sampleRate; i++) {
+	for (int i = 0; i < samples.size(); i++) {
 		convert16ToChar(buf, samples[i], i * af::TwoBytes);
 	}
-	std::ofstream out(fileName, std::ios::binary);
+	std::ofstream out(fileName, std::ios::binary | std::ios_base::out | std::ios_base::app);
 	if (!out) throw r.SaveFileErr;
 	for (int i = 0; i < buf.size(); i++) {
 		char x = (char)buf[i];
-		out << x;
-		//out.write(&x, sizeof(char));
+		out.write(&x, sizeof(char));
 	}
-	out.close();
 }
 
 int af::AudioFile::save(std::string fileName) {
@@ -185,8 +188,7 @@ int af::AudioFile::save(std::string fileName) {
 		std::ofstream out(fileName, std::ios::binary);
 		for (int i = 0; i < buf.size(); i++) {
 			char x = (char)buf[i];
-			out << x;
-			//out.write(&x, sizeof(char));
+			out.write(&x, sizeof(char));
 		}
 	}
 	catch (std::string i) {
@@ -200,7 +202,7 @@ std::vector<int16_t> af::AudioFile::getSamples() {
 	return samples;
 }
 int af::AudioFile::getSubChunk2Size() {
-	return subChunk2Size / af::TwoBytes;
+	return subChunk2Size;
 }
 void af::AudioFile::writeNewSamples(std::vector<int16_t> samp) {
 	samples = samp;

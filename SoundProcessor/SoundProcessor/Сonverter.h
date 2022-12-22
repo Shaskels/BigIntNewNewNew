@@ -5,18 +5,17 @@ namespace con {
 	const int SAMPLE_RATE = 44100;
 	class Converter {
 	public:
-		int start2 = 0;
 		std::vector<int16_t> samples2;
-		virtual int ChangeSamples(std::vector<int16_t>&, int, int) = 0;
+		virtual int ChangeSamples(std::vector<int16_t>&) = 0;
 	};
 	class MuteTheInterval : public Converter {
-		int ChangeSamples(std::vector<int16_t>& samples, int start, int end);
+		int ChangeSamples(std::vector<int16_t>& samples);
 	};
 	class Mixer : public Converter {
-		int ChangeSamples(std::vector<int16_t>& samples1, int start1, int end1);
+		int ChangeSamples(std::vector<int16_t>& samples1);
 	};
 	class Revers : public Converter {
-		int ChangeSamples(std::vector<int16_t>& samples, int start, int end);
+		int ChangeSamples(std::vector<int16_t>& samples);
 	};
 	class ConverterFactory {
 	public:

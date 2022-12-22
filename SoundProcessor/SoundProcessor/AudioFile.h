@@ -13,7 +13,8 @@ namespace af {
 		FourthByte
 	};
 	class AudioFile {
-		std::ifstream& in;
+		std::ifstream* in;
+		uint32_t readOut;
 		uint32_t chunkSize;
 		uint32_t subChunk1Size;
 		uint16_t audioFormat;
@@ -27,7 +28,7 @@ namespace af {
 		std::vector<int16_t> list;
 		std::vector<int16_t> samples;
 	public:
-		AudioFile(std::ifstream&);
+		AudioFile();
 		int load(std::string);
 		int save(std::string);
 		void writeToFile(std::string);
