@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{6ab84801-695d-44a2-8ffa-09061754a6d7}</ProjectGuid>
+    <ProjectGuid>{a8688e58-20e3-40fa-827b-5af383eb72cb}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
     <ConfigurationType>Application</ConfigurationType>
@@ -48,9 +48,23 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Prisoner'sDilemma\Prisoner'sDilemma.vcxproj">
-      <Project>{6af63554-148a-44ef-96e7-9b40bb5d5d80}</Project>
+    <ProjectReference Include="..\PrisDillema\PrisDillema.vcxproj">
+      <Project>{9b606531-baf5-42bc-bab9-8f81752c075f}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Statistician.txt">
+      <DeploymentContent>true</DeploymentContent>
+    </Text>
+    <Text Include="TheEqualizer.txt">
+      <DeploymentContent>true</DeploymentContent>
+    </Text>
+    <Text Include="ThePredictor.txt">
+      <DeploymentContent>true</DeploymentContent>
+    </Text>
+    <Text Include="x64\EyeForEye.txt">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </Text>
   </ItemGroup>
   <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
@@ -87,7 +101,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>..\Prisoner%27sDilemma\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\BigIntNewNewNew\Prisoner%27sDilemma\PrisDillema\x64\Debug;D:\BigIntNewNewNew\Prisoner%27sDilemma;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>Modes.obj;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
