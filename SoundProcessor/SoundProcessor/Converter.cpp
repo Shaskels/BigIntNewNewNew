@@ -7,21 +7,21 @@ int CheckErrors(std::vector<int16_t>& samples, int start, int end) {
 	err::Errors r;
 	if (start > end) {
 		std::cerr << r.IncorArguments;
-		return ERROR_VALUE;
+		return err::ERROR_VALUE;
 	}
-	return SUCCESS;
+	return err::SUCCESS;
 }
 int con::MuteTheInterval::ChangeSamples(std::vector<int16_t>& samples) {
 	for (int i = 0; i < samples.size(); i++) {
 		samples[i] = 0;
 	}
-	return SUCCESS;
+	return err::SUCCESS;
 }
 int con::Mixer::ChangeSamples(std::vector<int16_t>& samples1) {
 	for (int i = 0; i < std::min(samples1.size(), samples2.size()); i++) {
 		samples1[i] = (samples1[i] + samples2[i]) / 2;
 	}
-	return SUCCESS;
+	return err::SUCCESS;
 }
 int con::Revers::ChangeSamples(std::vector<int16_t>& samples) {
 	int16_t tmp;
@@ -30,7 +30,7 @@ int con::Revers::ChangeSamples(std::vector<int16_t>& samples) {
 		samples[i] = samples[samples.size() - i - 1];
 		samples[samples.size() - i - 1] = tmp;
 	}
-	return SUCCESS;
+	return err::SUCCESS;
 }
 con::Converter* con::MuteTheIntervalFactory::MakeConverter() {
 	return new MuteTheInterval();

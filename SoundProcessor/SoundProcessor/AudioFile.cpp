@@ -32,23 +32,26 @@ int32_t convertToIntFourBytes(char* buf) {
 }
 int af::AudioFile::readSamples() {
 	int16_t sample;
-	char buf[af::FourBytes] = { 0 };
+	char* bigBuffer = new char[af::SAMPLE_RATE * af::TwoBytes];
+
 	err::Errors r;
 	try{
 		samples.erase(samples.begin(), samples.end());
-		for (int i = 0; i < std::min(sampleRate, readOut / 2); i++) {
-			if (!(*in).read(buf, af::TwoBytes))
-				throw r.SamplesErr;
+		if (!(*in).read(bigBuffer, std::min(sampleRate * af::TwoBytes, readOut)))
+			throw r.SamplesErr;
+		for (int i = 0; i < std::min(sampleRate * af::TwoBytes, readOut); i+=2) {
+			char buf[af::TwoBytes] = { bigBuffer[i], bigBuffer[i + 1] };
 			sample = convertToIntTwoBytes(buf);
 			(samples).push_back(sample);
 		}
-		readOut = readOut - sampleRate * 2;
+		readOut = readOut - sampleRate * af::TwoBytes;
 	}
 	catch (std::string s) {
 		(*in).close();
 		std::cerr << s << std::endl;
 		return 1;
 	}
+	delete bigBuffer;
 	return 0;
 }
 int af::AudioFile::load(std::string fileName) {
@@ -113,9 +116,9 @@ int af::AudioFile::load(std::string fileName) {
 		//Errors r;
 		(*in).close();
 		std::cerr << i << std::endl;
-		return 1;
+		return err::ERROR_VALUE;
 	}
-	return 0;
+	return err::SUCCESS;
 }
 void addBack(std::vector<uint8_t>& buf, int n) {
 	for (int i = 0; i < n; i++) {
@@ -152,6 +155,7 @@ void af::AudioFile::writeToFile(std::string fileName) {
 		char x = (char)buf[i];
 		out.write(&x, sizeof(char));
 	}
+	out.close();
 }
 
 int af::AudioFile::save(std::string fileName) {
@@ -193,9 +197,9 @@ int af::AudioFile::save(std::string fileName) {
 	}
 	catch (std::string i) {
 		std::cerr << i << std::endl;
-		return 1;
+		return err::ERROR_VALUE;
 	}
-	return 0;
+	return err::SUCCESS;
 }
 
 std::vector<int16_t> af::AudioFile::getSamples() {
@@ -206,4 +210,7 @@ int af::AudioFile::getSubChunk2Size() {
 }
 void af::AudioFile::writeNewSamples(std::vector<int16_t> samp) {
 	samples = samp;
+}
+void af::AudioFile::closeIn() {
+	in->close();
 }

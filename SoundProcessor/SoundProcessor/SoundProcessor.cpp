@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include "Processor.h"
+
 int const MIN_SIZE_MUTE = 2;
 int const MIN_SIZE_MIX = 1;
 

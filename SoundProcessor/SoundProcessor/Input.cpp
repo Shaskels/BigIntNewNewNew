@@ -4,6 +4,7 @@
 #include <vector>
 #include "Input.h"
 #include "Ñonverter.h"
+
 void showHelp() {
     std::vector<con::ConverterFactory*> factory;
     factory.push_back(new con::MuteTheIntervalFactory);
@@ -21,7 +22,7 @@ int np::Input::GetProgramOptions(const int argc, const char* const argv[]) {
     err::Errors r;
     if (argc < 4) {
         std::cerr << r.SaveFileErr << std::endl;
-        return ERROR_VALUE;
+        return err::ERROR_VALUE;
     }
     std::vector<std::string> sours;
 
@@ -37,14 +38,14 @@ int np::Input::GetProgramOptions(const int argc, const char* const argv[]) {
         else if (sours[i].find("[") != std::string::npos) {
             if (sours[i][sours[i].size() - 1] != ']') {
                 std::cerr << r.CommandLineErr << std::endl;
-                return ERROR_VALUE;
+                return err::ERROR_VALUE;
             }
             sours[i].pop_back();
             sours[i].erase(0, 1);
             Input::files.push_back(sours[i]);
         }
     }
-    return SUCCESS;
+    return err::SUCCESS;
 }
 
 std::string np::Input::getFileName(int n) {

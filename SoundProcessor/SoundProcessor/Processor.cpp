@@ -3,11 +3,12 @@
 std::string MUTE_CONVERTER = "mute";
 std::string MIX_CONVERTER = "mix";
 std::string REVERS_CONVERTER = "revers";
+const int mainFile = 0;
 
 void pr::MuteProc::ProcType(std::vector<af::AudioFile>& files, configs::ConfigurationFile& config, int sec) {
     if (sec < config.Times[START] || sec > config.Times[END]) {
         auto begin = config.Times.cbegin();
-        config.Times.erase(begin, begin + 2);
+        config.Times.erase(begin, begin + OffsetTwo);
         return;
     }
     con::MuteTheIntervalFactory factory;
@@ -16,12 +17,13 @@ void pr::MuteProc::ProcType(std::vector<af::AudioFile>& files, configs::Configur
     (*con).ChangeSamples(samples);
     files[START].writeNewSamples(samples);
     auto begin = config.Times.cbegin();
-    config.Times.erase(begin, begin + 2);
+    config.Times.erase(begin, begin + OffsetTwo);
+    delete(con);
 }
 void pr::MixProc::ProcType(std::vector<af::AudioFile>& files, configs::ConfigurationFile& config, int sec) {
     if (sec < config.Times[START] || sec * con::SAMPLE_RATE > files[config.Links[START] - 1].getSubChunk2Size()) {
         auto begin = config.Times.cbegin();
-        config.Times.erase(begin, begin + 1);
+        config.Times.erase(begin, begin + OffsetOne);
         return;
     }
     con::MixerFactory factory;
@@ -31,16 +33,15 @@ void pr::MixProc::ProcType(std::vector<af::AudioFile>& files, configs::Configura
     (*con).ChangeSamples(samples);
     files[START].writeNewSamples(samples);
     auto begin = config.Times.cbegin();
-    config.Times.erase(begin, begin + 1);
+    config.Times.erase(begin, begin + OffsetOne);
     begin = config.Links.cbegin();
-    config.Links.erase(begin, begin + 1);
+    config.Links.erase(begin, begin + OffsetOne);
+    delete(con);
 }
 void pr::ReversProc::ProcType(std::vector<af::AudioFile>& files, configs::ConfigurationFile& config, int sec) {
-    if (sec == 30)
-        int i = 0;
     if (sec < config.Times[START] || sec > config.Times[END]) {
         auto begin = config.Times.cbegin();
-        config.Times.erase(begin, begin + 2);
+        config.Times.erase(begin, begin + OffsetTwo);
         return;
     }
     con::ReversFactory factory;
@@ -49,13 +50,14 @@ void pr::ReversProc::ProcType(std::vector<af::AudioFile>& files, configs::Config
     (*con).ChangeSamples(samples);
     files[START].writeNewSamples(samples);
     auto begin = config.Times.cbegin();
-    config.Times.erase(begin, begin + 2);
+    config.Times.erase(begin, begin + OffsetTwo);
+    delete(con);
 }
 int pr::CreateFiles(np::Input in, std::vector<af::AudioFile>& files) {
     for (int i = 2; i < in.getFilesSize(); i++) {
         af::AudioFile file;
-        if (file.load(in.getFileName(i)) == 1)
-            return 0;
+        if (file.load(in.getFileName(i)) == err::ERROR_VALUE)
+            return err::ERROR_VALUE;
         files.push_back(file);
     }
     return 1;
@@ -87,9 +89,9 @@ int pr::Processing(np::Input in, std::vector<af::AudioFile>& files, configs::Con
     err::Errors r;
 
     try {
-        if (files[0].save(in.getFileName(1)) == 1)
+        if (files[mainFile].save(in.getFileName(1)) == err::ERROR_VALUE)
             throw r.SaveFileErr;
-        for (int second = 0; second < (files[0].getSubChunk2Size() / (con::SAMPLE_RATE * 2)) + 1; second++) {
+        for (int second = 0; second < (files[0].getSubChunk2Size() / (con::SAMPLE_RATE * af::TwoBytes)) + OffsetOne; second++) {
             configs::ConfigurationFile tmpConfig = config;
             int f = 0;
             for (int i = 0; i < config.Converters.size(); i++) {
@@ -104,16 +106,22 @@ int pr::Processing(np::Input in, std::vector<af::AudioFile>& files, configs::Con
             if (f == 0) {
                 throw r.CommandLineErr;
             }
-            files[0].writeToFile(in.getFileName(1));
+            files[mainFile].writeToFile(in.getFileName(1));
             for (int i = 0; i < files.size(); i++) {
-                if (files[i].getSubChunk2Size() >= (second + 1) * con::SAMPLE_RATE * 2)
+                if (files[i].getSubChunk2Size() >= (second + 1) * con::SAMPLE_RATE * af::TwoBytes)
                     files[i].readSamples();
             }
         }
     }
     catch (std::string i) {
+        for (int i = 0; i < files.size(); i++) {
+             files[i].closeIn();
+        }
         std::cerr << i << std::endl;
-        return ERROR_VALUE;
+        return err::ERROR_VALUE;
     }
-    return SUCCESS;
+    for (int i = 0; i < files.size(); i++) {
+        files[i].closeIn();
+    }
+    return err::SUCCESS;
 }

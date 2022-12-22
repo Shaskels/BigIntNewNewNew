@@ -4,6 +4,9 @@
 #include <fstream>
 
 #include "ConfigurationFile.h"
+std::string STOP_SYMBOL = "!";
+char LINK = '$';
+char DELETE = '0';
 bool isDigit(std::string s) {
 	for (int i = 0; i < s.size(); i++) {
 		if (!isdigit(s[i]))
@@ -25,13 +28,13 @@ int configs::ConfigurationFile::getConfigs(std::string file, ConfigurationFile& 
 	std::ifstream f(file);
 	if (!f) {
 		std::cerr << r.ConfFileErr << std::endl;
-		return ERROR_VALUE;
+		return err::ERROR_VALUE;
 	}
 	std::string str;
 	std::string c;
 	int i = 0;
 	f >> c;
-	while (c != "!") {
+	while (c != STOP_SYMBOL) {
 		try {
 			f.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 			if (c == "#")
@@ -39,8 +42,8 @@ int configs::ConfigurationFile::getConfigs(std::string file, ConfigurationFile& 
 			else {
 				if (isDigit(c))
 					conf.Times.push_back(makeInt(c));
-				else if (c[0] == '$') {
-					c[0] = '0';
+				else if (c[0] == LINK) {
+					c[0] = DELETE;
 					conf.Links.push_back(makeInt(c));
 				}
 				else {
@@ -51,8 +54,8 @@ int configs::ConfigurationFile::getConfigs(std::string file, ConfigurationFile& 
 		}
 		catch (const std::ios_base::failure& fail) {
 			std::cerr << fail.what() << '\n';
-			return ERROR_VALUE;
+			return err::ERROR_VALUE;
 		}
 	}
-	return SUCCESS;
+	return err::SUCCESS;
 }

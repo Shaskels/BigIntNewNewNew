@@ -3,9 +3,11 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+
 namespace af {
 	const int TwoBytes = 2;
 	const int FourBytes = 4;
+	const int SAMPLE_RATE = 44100;
 	enum Bytes {
 		FirstByte,
 		SecondByte,
@@ -36,6 +38,7 @@ namespace af {
 		int getSubChunk2Size();
 		void writeNewSamples(std::vector<int16_t>);
 		int readSamples();
+		void closeIn();
 
 	};
 }

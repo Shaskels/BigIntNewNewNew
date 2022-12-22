@@ -2,9 +2,9 @@
 #include <map>
 #include <string>
 
-int const ERROR_VALUE = 0;
-int const SUCCESS = 1;
 namespace err {
+	int const ERROR_VALUE = 0;
+	int const SUCCESS = 1;
 	class Errors {
 	public:
 		std::string openErr = "Error! File could not be opened";

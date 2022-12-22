@@ -5,6 +5,8 @@
 #include "Input.h"
 #include <vector>
 namespace pr {
+	const int OffsetTwo = 2;
+	const int OffsetOne = 1;
 	int const START = 0;
 	int const END = 1;
 	class Processor {
